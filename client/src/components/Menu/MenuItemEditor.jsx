@@ -2,16 +2,35 @@ import React, { useEffect } from "react";
 import { FaUpload, FaSave } from "react-icons/fa";
 import { RxCross2 } from "react-icons/rx";
 
-const TAG_OPTIONS = ["Best Seller", "Veg", "Non Veg", "Spicy", "Chef's Special"];
+const TAG_OPTIONS = [
+  "Best Seller",
+  "Veg",
+  "Non Veg",
+  "Spicy",
+  "Chef's Special",
+];
+const STATIC_CATEGORIES = [
+  { _id: "starter", name: "Starter" },
+  { _id: "main-course", name: "Main Course" },
+  { _id: "dessert", name: "Dessert" },
+  { _id: "beverages", name: "Beverages" },
+];
 
 const MenuItemEditor = ({
+  // editRow,
+  // categories,
+  // setEditRow,
+  // handleSaveItem,
+  // handleCancelEdit, 
+  // previewImage,
+  // setPreviewImage,
   editRow,
-  categories,
   setEditRow,
   handleSaveItem,
   handleCancelEdit,
   previewImage,
   setPreviewImage,
+  errors,
 }) => {
   // Toggle tag selection
   const handleTagChange = (tag) => {
@@ -60,7 +79,7 @@ const MenuItemEditor = ({
               alt={editRow.name}
               className="h-32 w-full object-cover rounded"
             />
-            <div className="flex flex-col absolute inset-0 w-full h-full flex justify-center items-center bg-gray-100/50 gap-2">
+            <div className=" flex-col absolute inset-0 w-full h-full flex justify-center items-center bg-gray-100/50 gap-2">
               <FaUpload className="text-green-400 text-4xl z-100" />
               <p className="text-xs">Click to Upload</p>
             </div>
@@ -76,15 +95,14 @@ const MenuItemEditor = ({
       {/* Editable Fields */}
       <div className="w-full flex flex-col flex-1 justify-between">
         <div className="flex flex-col gap-2">
-
-        {/* Tags - multiple checkboxes */}
+          {/* Tags - multiple checkboxes */}
           <div className="flex flex-wrap gap-1">
             {TAG_OPTIONS.map((tag) => (
               <label
                 key={tag}
                 onClick={() => handleTagChange(tag)}
                 className={`flex items-center gap-1 text-xs border px-2 py-0.2 rounded-full cursor-pointer 
-    ${editRow?.tags?.includes(tag) ? 'bg-orange-400 text-white' : ''}
+    ${editRow?.tags?.includes(tag) ? "bg-orange-400 text-white" : ""}
   `}
               >
                 {tag}
@@ -93,7 +111,7 @@ const MenuItemEditor = ({
           </div>
 
           <div className="w-full flex justify-center items-center gap-2">
-            <input
+            {/* <input
               type="text"
               value={editRow.name}
               onChange={(e) =>
@@ -101,9 +119,21 @@ const MenuItemEditor = ({
               }
               className="w-full border px-1 rounded text-sm"
               placeholder="Name"
+            /> */}
+            <input
+              type="text"
+              value={editRow.name}
+              onChange={(e) =>
+                setEditRow((p) => ({ ...p, name: e.target.value }))
+              }
+              className={`w-full border px-1 rounded text-sm ${
+                errors?.name ? "border-red-500" : "border-gray-300"
+              }`}
+              placeholder="Name"
             />
+
             {/* Actions */}
-            <div className="flex justify-between items-center">
+            {/* <div className="flex justify-between items-center">
               <div className="flex gap-2">
                 <button
                   onClick={handleSaveItem}
@@ -118,19 +148,33 @@ const MenuItemEditor = ({
                   <RxCross2 />
                 </button>
               </div>
-            </div>
+            </div> */}
           </div>
 
           {/* Category dropdown */}
-          <select
+          {/* <select
             value={editRow.categoryId}
             onChange={(e) =>
               setEditRow((p) => ({ ...p, categoryId: e.target.value }))
             }
             className="border rounded w-min p-0.5 text-sm"
+          > */}
+          <select
+            value={editRow.categoryId}
+            onChange={(e) =>
+              setEditRow((p) => ({ ...p, categoryId: e.target.value }))
+            }
+            className={`border rounded w-min p-0.5 text-sm ${
+              errors?.categoryId ? "border-red-500" : "border-gray-300"
+            }`}
           >
             <option value="">Select category</option>
-            {categories.map((cat) => (
+            {/* {categories.map((cat) => (
+              <option key={cat._id} value={cat._id}>
+                {cat.name}
+              </option> 
+            ))} */}
+            {STATIC_CATEGORIES.map((cat) => (
               <option key={cat._id} value={cat._id}>
                 {cat.name}
               </option>
@@ -146,7 +190,7 @@ const MenuItemEditor = ({
             placeholder="Description"
             rows={2}
           />
-          <input
+          {/* <input
             type="number"
             value={editRow.price}
             onChange={(e) =>
@@ -154,9 +198,37 @@ const MenuItemEditor = ({
             }
             className="text-sm border p-1 rounded w-fit"
             placeholder="Price"
+          /> */}  
+          <input
+            type="number"
+            value={editRow.price}  
+            onChange={(e) =>
+              setEditRow((p) => ({ ...p, price: e.target.value }))
+            }
+            className={`text-sm border p-1 rounded w-fit ${
+              errors?.price ? "border-red-500" : "border-gray-300"
+            }`}
+            placeholder="Price"
           />
         </div>
-      </div>
+        {/* Actions */}
+        <div className="flex gap-2 mt-2">
+          <button
+            onClick={handleSaveItem}
+            className="w-1/2 flex items-center justify-center gap-1 bg-green-500 text-white text-sm py-1.5 rounded hover:bg-green-600"
+          >
+            <FaSave />
+            Save
+          </button>
+          <button
+            onClick={handleCancelEdit}
+            className="w-1/2 flex items-center justify-center gap-1 bg-gray-300 text-gray-800 text-sm py-1.5 rounded hover:bg-gray-400"
+          >
+            <RxCross2 />
+            Cancel
+          </button>
+        </div>
+      </div> 
     </div>
   );
 };

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import toast from "react-hot-toast";
 import {
   fetchCategories,
   fetchMenuItems,
@@ -10,7 +11,7 @@ import {
 
 import MenuHeader from "./MenuHeader";
 import CategoryFilter from "./CategoryFilter";
-import SortActions from './SortAction';
+import SortActions from "./SortAction";
 import MenuItemCard from "./MenuItemCard";
 import MenuItemEditor from "./MenuItemEditor";
 import MenuItemListView from "./MenuItemListView";
@@ -22,7 +23,7 @@ const Menu = () => {
     (state) => state.menu
   );
 
-  const [view, setView] = useState('grid');
+  const [view, setView] = useState("grid");
   const [activeCategory, setActiveCategory] = useState("All");
   const [availability, setAvailability] = useState({});
   const [sortBy, setSortBy] = useState("default");
@@ -40,6 +41,8 @@ const Menu = () => {
     available: true,
   });
   const [previewImage, setPreviewImage] = useState(null);
+
+  const [errors, setErrors] = useState({}); // for frontend Error
 
   useEffect(() => {
     dispatch(fetchCategories());
@@ -64,18 +67,41 @@ const Menu = () => {
     );
   };
 
+  // Frontend validation function
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!editRow.name?.trim()) {
+      newErrors.name = true;
+    }
+    if (!editRow.categoryId) {
+      newErrors.categoryId = true;
+    }
+    if (!editRow.price) {
+      newErrors.price = true;
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSaveItem = () => {
+    const isValid = validateForm();
+
+    if (!isValid) {
+      toast.error("Category, name and price are required");
+      return; //  backend hit stop
+    }
+
     const formData = new FormData();
 
-    console.log(editRow);
     formData.append("name", editRow.name);
     formData.append("price", editRow.price);
     formData.append("description", editRow.description);
     formData.append("categoryId", editRow.categoryId);
     formData.append("available", editRow.available);
-    formData.append("tags",editRow.tags);
-
-    console.log(formData);
+    formData.append("tags", editRow.tags);
 
     if (editRow.imageUrl instanceof File) {
       formData.append("file", editRow.imageUrl);
@@ -83,14 +109,40 @@ const Menu = () => {
 
     if (isNewItem) {
       dispatch(addMenuItem(formData));
-      console.log("New Item", formData);
     } else {
-      console.log(formData);
       dispatch(updateMenuItem({ id: editingId, updatedData: formData }));
     }
 
     resetEditState();
   };
+
+  // const handleSaveItem = () => {
+  //   const formData = new FormData();
+
+  //   console.log(editRow);
+  //   formData.append("name", editRow.name);
+  //   formData.append("price", editRow.price);
+  //   formData.append("description", editRow.description);
+  //   formData.append("categoryId", editRow.categoryId);
+  //   formData.append("available", editRow.available);
+  //   formData.append("tags",editRow.tags);
+
+  //   console.log(formData);
+
+  //   if (editRow.imageUrl instanceof File) {
+  //     formData.append("file", editRow.imageUrl);
+  //   }
+
+  //   if (isNewItem) {
+  //     dispatch(addMenuItem(formData));
+  //     console.log("New Item", formData);
+  //   } else {
+  //     console.log(formData);
+  //     dispatch(updateMenuItem({ id: editingId, updatedData: formData }));
+  //   }
+
+  //   resetEditState();
+  // };
 
   const handleCancelEdit = () => resetEditState();
 
@@ -146,7 +198,6 @@ const Menu = () => {
     }
   };
 
-
   // Sorting logic
   const sortedItems = [...menuItems].sort((a, b) => {
     if (sortBy === "price_low_high") return a.price - b.price;
@@ -189,24 +240,45 @@ const Menu = () => {
       </div>
 
       {/* Menu Items */}
-      <div className={`w-full md:p-2 p-3 ${view == 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-2' : 'space-y-2'}`}>
-
+      <div
+        className={`w-full md:p-2 p-3 ${
+          view == "grid"
+            ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-2"
+            : "space-y-2"
+        }`}
+      >
         {/* Add new item form */}
         {view === "grid" && isNewItem && editingId === "new" && (
+          // <MenuItemEditor
+          //   editRow={editRow}
+          //   categories={categories}
+          //   setEditRow={setEditRow}
+          //   handleSaveItem={handleSaveItem}
+          //   handleCancelEdit={handleCancelEdit}
+          //   previewImage={previewImage}
+          //   setPreviewImage={setPreviewImage}
+          // />
           <MenuItemEditor
             editRow={editRow}
-            categories={categories}
             setEditRow={setEditRow}
             handleSaveItem={handleSaveItem}
             handleCancelEdit={handleCancelEdit}
             previewImage={previewImage}
             setPreviewImage={setPreviewImage}
+            errors={errors}
           />
         )}
 
         {/* Add new item form */}
         {view === "list" && isNewItem && editingId === "new" && (
           <MenuItemEditorListView
+            // editRow={editRow}
+            // categories={categories}
+            // setEditRow={setEditRow}
+            // handleSaveItem={handleSaveItem}
+            // handleCancelEdit={handleCancelEdit}
+            // previewImage={previewImage}
+            // setPreviewImage={setPreviewImage}
             editRow={editRow}
             categories={categories}
             setEditRow={setEditRow}
@@ -214,6 +286,7 @@ const Menu = () => {
             handleCancelEdit={handleCancelEdit}
             previewImage={previewImage}
             setPreviewImage={setPreviewImage}
+            errors={errors}
           />
         )}
 
@@ -226,18 +299,26 @@ const Menu = () => {
         ) : (
           filteredItems.map((item) => {
             const isEditing = editingId === item._id;
-            return view === 'list' ? (
+            return view === "list" ? (
               <div key={item._id} className="h-fit">
                 {/* List view component goes here */}
                 {isEditing ? (
                   <MenuItemEditorListView
+                    // editRow={editRow}
+                    // categories={categories}
+                    // setEditRow={setEditRow}
+                    // handleSaveItem={handleSaveItem}
+                    // handleCancelEdit={handleCancelEdit}
+                    // previewImage={previewImage}
+                    // setPreviewImage={setPreviewImage}
                     editRow={editRow}
-                    categories={categories}
+                    categories={categories} 
                     setEditRow={setEditRow}
                     handleSaveItem={handleSaveItem}
                     handleCancelEdit={handleCancelEdit}
                     previewImage={previewImage}
                     setPreviewImage={setPreviewImage}
+                    errors={errors}
                   />
                 ) : (
                   <MenuItemListView
@@ -250,18 +331,26 @@ const Menu = () => {
                   />
                 )}
               </div>
-
             ) : (
               <div key={item._id} className="h-fit">
                 {isEditing ? (
+                  // <MenuItemEditor
+                  //   editRow={editRow}
+                  //   categories={categories}
+                  //   setEditRow={setEditRow}
+                  //   handleSaveItem={handleSaveItem}
+                  //   handleCancelEdit={handleCancelEdit}
+                  //   previewImage={previewImage}
+                  //   setPreviewImage={setPreviewImage}
+                  // />
                   <MenuItemEditor
                     editRow={editRow}
-                    categories={categories}
                     setEditRow={setEditRow}
                     handleSaveItem={handleSaveItem}
                     handleCancelEdit={handleCancelEdit}
                     previewImage={previewImage}
                     setPreviewImage={setPreviewImage}
+                    errors={errors}
                   />
                 ) : (
                   <MenuItemCard
@@ -275,7 +364,7 @@ const Menu = () => {
                 )}
               </div>
             );
-          })
+          }) 
         )}
       </div>
     </div>
