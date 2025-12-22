@@ -12,6 +12,7 @@ const MenuItemEditorListView = ({
   handleCancelEdit,
   previewImage,
   setPreviewImage,
+  errors,
 }) => {
   return (
     <div className="w-full bg-white border border-gray-200 rounded-xl p-2 flex flex-row gap-4 items-center shadow-sm">
@@ -47,14 +48,18 @@ const MenuItemEditorListView = ({
           type="text"
           value={editRow.name}
           onChange={(e) => setEditRow((p) => ({ ...p, name: e.target.value }))}
-          className="border rounded px-2 py-1 text-sm"
+          className={`border rounded px-2 py-1 text-sm ${
+            errors?.name ? "border-red-500" : "border-gray-300"
+          }`}
           placeholder="Item name"
         />
         <div className="flex gap-1">
           <select
             value={editRow.categoryId}
             onChange={(e) => setEditRow((p) => ({ ...p, categoryId: e.target.value }))}
-            className="w-fit border rounded px-2 py-1 text-sm"
+            className={`h-min border rounded px-2 py-1 text-sm ${
+            errors?.name ? "border-red-500" : "border-gray-300"
+          }`}
           >
             <option value="">Select category</option>
             {categories.map((cat) => (
@@ -97,7 +102,9 @@ const MenuItemEditorListView = ({
           type="number"
           value={editRow.price}
           onChange={(e) => setEditRow((p) => ({ ...p, price: e.target.value }))}
-          className="border rounded px-2 py-1 text-sm w-full"
+          className={`border rounded px-2 py-1 text-sm w-full ${
+            errors?.price ? "border-red-500" : "border-gray-300"
+          }`}
           placeholder="Price"
         />
       </div>

@@ -12,6 +12,7 @@ const MenuItemEditor = ({
   handleCancelEdit,
   previewImage,
   setPreviewImage,
+  errors,
 }) => {
   // Toggle tag selection
   const handleTagChange = (tag) => {
@@ -99,7 +100,9 @@ const MenuItemEditor = ({
               onChange={(e) =>
                 setEditRow((p) => ({ ...p, name: e.target.value }))
               }
-              className="w-full border px-1 rounded text-sm"
+              className={`w-full border px-1 rounded text-sm ${
+                errors?.name ? "border-red-500" : "border-gray-300"
+              }`}
               placeholder="Name"
             />
             {/* Actions */}
@@ -127,7 +130,9 @@ const MenuItemEditor = ({
             onChange={(e) =>
               setEditRow((p) => ({ ...p, categoryId: e.target.value }))
             }
-            className="border rounded w-min p-0.5 text-sm"
+            className={`border rounded w-min p-0.5 text-sm ${
+              errors?.categoryId ? "border-red-500" : "border-gray-300"
+            }`}
           >
             <option value="">Select category</option>
             {categories.map((cat) => (
@@ -152,7 +157,9 @@ const MenuItemEditor = ({
             onChange={(e) =>
               setEditRow((p) => ({ ...p, price: e.target.value }))
             }
-            className="text-sm border p-1 rounded w-fit"
+            className={`text-sm border p-1 rounded w-fit ${
+              errors?.price ? "border-red-500" : "border-gray-300"
+            }`}
             placeholder="Price"
           />
         </div>

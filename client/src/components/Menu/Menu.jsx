@@ -40,6 +40,7 @@ const Menu = () => {
     available: true,
   });
   const [previewImage, setPreviewImage] = useState(null);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     dispatch(fetchCategories());
@@ -55,6 +56,25 @@ const Menu = () => {
     }
   }, [menuItems]);
 
+     // Frontend validation function
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!editRow.name?.trim()) {
+      newErrors.name = true;
+    }
+    if (!editRow.categoryId) {
+      newErrors.categoryId = true;
+    }
+    if (!editRow.price) {
+      newErrors.price = true;
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  };
+
   const toggleAvailability = (id, item) => {
     dispatch(
       updateMenuItem({
@@ -65,6 +85,13 @@ const Menu = () => {
   };
 
   const handleSaveItem = () => {
+    const isValid = validateForm();
+
+    if (!isValid) {
+      toast.error("Category, name and price are required");
+      return; //  backend hit stop
+    }
+
     const formData = new FormData();
 
     console.log(editRow);
@@ -201,6 +228,7 @@ const Menu = () => {
             handleCancelEdit={handleCancelEdit}
             previewImage={previewImage}
             setPreviewImage={setPreviewImage}
+            errors={errors}
           />
         )}
 
@@ -214,6 +242,7 @@ const Menu = () => {
             handleCancelEdit={handleCancelEdit}
             previewImage={previewImage}
             setPreviewImage={setPreviewImage}
+            errors={errors}
           />
         )}
 
