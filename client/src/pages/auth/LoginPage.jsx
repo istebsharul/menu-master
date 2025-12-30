@@ -27,7 +27,7 @@ export default function LoginPage() {
   // handle error
   useEffect(() => {
     if (error) {
-      alert(error); // replace with toast later
+      alert("Hello",error); // replace with toast later
       dispatch(clearError());
     }
   }, [error, dispatch]);

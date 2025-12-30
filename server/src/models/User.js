@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema({
   },
   phone: String,
   logo: String,
-  banner: [String],         
+  banner: [String],      
   gallery: [String],
   slug: { type: String, unique: true, sparse: true }, 
 

@@ -13,6 +13,14 @@ const MenuItemCard = ({ item, categories, availability, onEdit, onDelete, onTogg
   const isLong = item.description?.length > 80; // adjust length as per need
   const displayText = expanded ? item.description : item.description?.slice(0, 80);
 
+  const TAG_CONFIG = {
+    "Best Seller": { emoji: "⭐", label: "Best Seller" },
+    "Veg": { emoji: "🟢", label: "Veg" },
+    "Non Veg": { emoji: "🔴", label: "Non-Veg" },
+    "Spicy": { emoji: "🌶️", label: "Spicy" },
+    "Chef's Special": { emoji: "👨‍🍳", label: "Chef's Special" },
+  };
+
   return (
     <div className="max-w-lg w-full bg-white rounded-xl border border-gray-200 md:p-4 p-2 flex gap-2 items-start shadow-inner">
       {item?.imageUrl && (
@@ -27,14 +35,21 @@ const MenuItemCard = ({ item, categories, availability, onEdit, onDelete, onTogg
         <div>
           {item?.tags?.length > 0 && (
             <div className="flex flex-wrap gap-1">
-              {item.tags.map((tag, i) => (
-                <label
-                  key={i}
-                  className="flex items-center gap-1 text-xs border px-2 py-0.2 rounded-full bg-orange-400 text-white"
-                >
-                  {tag}
-                </label>
-              ))}
+              {item.tags.map((tag, i) => {
+                const config = TAG_CONFIG[tag];
+                if (!config) return null;
+
+                return (
+                  <span
+                    key={i}
+                    className="flex items-center gap-1 text-xs border px-2 py-0.5 rounded-full"
+                    title={config.label}
+                  >
+                    <span className="text-xs">{config.emoji}</span>
+                    <span>{config.label}</span>
+                  </span>
+                );
+              })}
             </div>
           )}
 

@@ -3,6 +3,7 @@ import { FaEdit, FaTrash } from "react-icons/fa";
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import { getProfile, updateProfile, clearProfileState } from "../../redux/slices/profileSlice";
 import toast, { Toaster } from "react-hot-toast";
+import { FaUpload } from "react-icons/fa";
 
 // Helper - create object URL and return a cleanup function
 const createPreview = (file) => {
@@ -10,36 +11,45 @@ const createPreview = (file) => {
   return { file, url };
 };
 
-// Reusable ImageSection component
 const ImageSection = ({
   title,
-  existingItems, // [{ id?, url }]
-  newFilesPreview, // [{ file, url }]
+  existingItems,
+  newFilesPreview,
   onAddFiles,
   onDelete,
   isEditing,
   accept = "image/*",
   inputId,
   maxFiles = 10,
-  maxSizeBytes = 5 * 1024 * 1024, // 5MB default
+  maxSizeBytes = 5 * 1024 * 1024,
 }) => {
-  const totalCount = (existingItems?.length || 0) + (newFilesPreview?.length || 0);
+  const totalCount =
+    (existingItems?.length || 0) + (newFilesPreview?.length || 0);
+
+  const canAddMore = isEditing && totalCount < maxFiles;
 
   return (
     <div className="mb-6">
-      <h2 className="font-medium mb-2">{title} ({totalCount})</h2>
+      <h2 className="font-medium mb-2">
+        {title} ({totalCount})
+      </h2>
 
       <div className="grid grid-cols-3 gap-3">
+        {/* Existing Images */}
         {(existingItems || []).map((item, idx) => (
           <div key={`existing-${item.id ?? idx}`} className="relative">
-            <img src={item.url} alt={`${title} ${idx}`} className="w-full h-24 object-cover rounded-md border" />
+            <img
+              src={item.url}
+              alt={`${title} ${idx}`}
+              className="w-full h-24 object-cover rounded-md border"
+            />
             {isEditing && (
               <button
                 type="button"
-                onClick={() => onDelete({ type: "existing", index: idx, id: item.id })}
-                className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition-colors"
-                aria-label={`Delete existing ${title} ${idx}`}
-                title="Delete Image"
+                onClick={() =>
+                  onDelete({ type: "existing", index: idx, id: item.id })
+                }
+                className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600"
               >
                 <FaTrash size={10} />
               </button>
@@ -47,47 +57,68 @@ const ImageSection = ({
           </div>
         ))}
 
+        {/* New Image Previews */}
         {(newFilesPreview || []).map((p, idx) => (
           <div key={`new-${idx}`} className="relative">
-            <img src={p.url} alt={`${title} new ${idx}`} className="w-full h-24 object-cover rounded-md border" />
+            <img
+              src={p.url}
+              alt={`${title} new ${idx}`}
+              className="w-full h-24 object-cover rounded-md border"
+            />
             {isEditing && (
               <button
                 type="button"
                 onClick={() => onDelete({ type: "new", index: idx })}
-                className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition-colors"
-                aria-label={`Delete new ${title} ${idx}`}
-                title="Delete Image"
+                className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600"
               >
                 <FaTrash size={10} />
               </button>
             )}
           </div>
         ))}
-      </div>
 
-      {isEditing && (
-        <div className="mt-2">
-          <input
-            id={inputId}
-            type="file"
-            accept={accept}
-            multiple
-            onChange={(e) => {
-              const files = Array.from(e.target.files || []).slice(0, Math.max(0, maxFiles - totalCount));
-              // basic filtering by size + type
-              const valid = files.filter(f => f.type.startsWith("image/") && f.size <= maxSizeBytes);
-              if (files.length !== valid.length) {
-                toast.error(`Some files were ignored. Max ${maxFiles} files and each <= ${Math.round(maxSizeBytes / 1024 / 1024)}MB`);
-              }
-              onAddFiles(valid);
-              // reset input so same file can be reselected if needed
-              e.target.value = null;
-            }}
-            className="border px-3 py-2 rounded"
-            aria-label={`Add ${title}`}
-          />
-        </div>
-      )}
+        {/* Upload Box */}
+        {canAddMore && (
+          <label
+            htmlFor={inputId}
+            className="relative w-full h-24 flex flex-col items-center justify-center gap-1 rounded-md border-2 border-dashed border-gray-300 cursor-pointer bg-gray-50 hover:bg-gray-100 transition"
+          >
+            <FaUpload className="text-xl text-gray-500" />
+            <p className="text-xs text-gray-600">Upload</p>
+
+            <input
+              id={inputId}
+              type="file"
+              accept={accept}
+              multiple
+              className="absolute inset-0 opacity-0 cursor-pointer"
+              onChange={(e) => {
+                const files = Array.from(e.target.files || []).slice(
+                  0,
+                  maxFiles - totalCount
+                );
+
+                const valid = files.filter(
+                  (f) =>
+                    f.type.startsWith("image/") &&
+                    f.size <= maxSizeBytes
+                );
+
+                if (files.length !== valid.length) {
+                  toast.error(
+                    `Some files were ignored. Max ${maxFiles} images, each ≤ ${
+                      maxSizeBytes / 1024 / 1024
+                    }MB`
+                  );
+                }
+
+                onAddFiles(valid);
+                e.target.value = null;
+              }}
+            />
+          </label>
+        )}
+      </div>
     </div>
   );
 };
@@ -298,8 +329,9 @@ const ProfilePage = () => {
     if (newLogo) formData.append("logo", newLogo.file);
     if (toDeleteExistingLogo) formData.append("deleteLogo", "true");
 
-    newBanners.forEach(p => formData.append("banner[]", p.file));
-    newGallery.forEach(p => formData.append("gallery[]", p.file));
+    newBanners.forEach(p => formData.append("banner", p.file));
+    console.log(newBanners);
+    newGallery.forEach(p => formData.append("gallery", p.file));
 
     if (toDeleteExistingBanners.length > 0) formData.append("deletedBanners", JSON.stringify(toDeleteExistingBanners));
     if (toDeleteExistingGallery.length > 0) formData.append("deletedGallery", JSON.stringify(toDeleteExistingGallery));
@@ -385,10 +417,10 @@ const ProfilePage = () => {
           ) : null}
         </div>
 
-        {/* Logo */}
+        {/* Logo
         <div className="flex flex-col items-center mb-6">
           <div className="w-28 h-28">
-            <img src={logoPreviewUrl || "https://image.similarpng.com/file/similarpng/very-thumbnail/2021/07/Chef-restaurant-logo-illustrations-template-on-transparent-background-PNG.png"} alt="Logo" className="w-full h-full object-cover rounded-full border border-gray-300 shadow" />
+            <img src={logoPreviewUrl || "https://image.similarpng.com/file/similarpng/very-thumbnail/2021/07/Chef-restaurant-logo-illustrations-template-on-transparent-background-PNG.png"} alt="Logo" className="w-full h-full p-4 object-cover border border-gray-300 shadow" />
           </div>
 
           {isEditing && (
@@ -398,6 +430,62 @@ const ProfilePage = () => {
                 <button type="button" onClick={handleDeleteLogo} className="text-red-600" aria-label="Remove logo">Remove</button>
               )}
             </div>
+          )}
+        </div> */}
+
+        {/* Logo */}
+        <div className="flex flex-col items-center mb-6">
+          <div className="w-28 h-28 relative cursor-pointer">
+            {/* Hidden file input */}
+            {isEditing && (
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleLogoChange}
+                className="absolute inset-0 opacity-0 z-20 cursor-pointer"
+                aria-label="Change logo"
+              />
+            )}
+
+            {/* Image Preview */}
+            {logoPreviewUrl || existingLogo ? (
+              <>
+                <img
+                  src={
+                    logoPreviewUrl ||
+                    existingLogo ||
+                    "https://image.similarpng.com/file/similarpng/very-thumbnail/2021/07/Chef-restaurant-logo-illustrations-template-on-transparent-background-PNG.png"
+                  }
+                  alt="Logo"
+                  className="w-full h-full p-4 object-cover border border-gray-300 shadow rounded"
+                />
+
+                {/* Overlay */}
+                {isEditing && (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-black/30 text-white z-10 rounded">
+                    <FaUpload className="text-2xl" />
+                    <p className="text-xs">Click to Upload</p>
+                  </div>
+                )}
+              </>
+            ) : (
+              /* Empty State */
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-blue-100/60 z-10 rounded">
+                <FaUpload className="text-green-500 text-3xl" />
+                <p className="text-xs">Click to Upload</p>
+              </div>
+            )}
+          </div>
+
+          {/* Remove button */}
+          {isEditing && (existingLogo || logoPreviewUrl) && (
+            <button
+              type="button"
+              onClick={handleDeleteLogo}
+              className="mt-2 text-xs text-red-600 hover:underline"
+            >
+              Remove Logo
+            </button>
           )}
         </div>
 
@@ -451,385 +539,3 @@ const ProfilePage = () => {
 };
 
 export default ProfilePage;
-
-
-// import React, { useEffect, useState, useMemo } from "react";
-// import { FaEdit, FaTrash } from "react-icons/fa";
-// import { useDispatch, useSelector } from "react-redux";
-// import {
-//   getProfile,
-//   updateProfile,
-//   clearProfileState,
-// } from "../../redux/slices/profileSlice";
-
-// const ProfilePage = () => {
-//   const dispatch = useDispatch();
-//   const { user, loading, error, success } = useSelector(
-//     (state) => state.profile
-//   );
-
-//   // text-only fields
-//   const [form, setForm] = useState({
-//     name: "",
-//     email: "",
-//     phone: "",
-//     businessName: "",
-//   });
-
-//   // file states
-//   const [logoFile, setLogoFile] = useState(null);
-//   const [bannerFiles, setBannerFiles] = useState([]);
-//   const [galleryFiles, setGalleryFiles] = useState([]);
-//   const [isEditing, setIsEditing] = useState(false);
-
-//   // Keep track of existing images to delete
-//   const [deletedBanners, setDeletedBanners] = useState([]);
-//   const [deletedGallery, setDeletedGallery] = useState([]);
-
-//   // Previews (computed from file states or fallback to user data)
-//   const logoPreview = useMemo(
-//     () => (logoFile ? URL.createObjectURL(logoFile) : user?.logo || ""),
-//     [logoFile, user?.logo]
-//   );
-
-//   const bannerPreviews = useMemo(() => {
-//     const existingBanners = (user?.banner || []).filter(
-//       (_, index) => !deletedBanners.includes(index)
-//     );
-//     const newPreviews = bannerFiles.map((f) => URL.createObjectURL(f));
-//     return [...existingBanners, ...newPreviews];
-//   }, [bannerFiles, user?.banner, deletedBanners]);
-
-//   const galleryPreviews = useMemo(() => {
-//     const existingGallery = (user?.gallery || []).filter(
-//       (_, index) => !deletedGallery.includes(index)
-//     );
-//     const newPreviews = galleryFiles.map((f) => URL.createObjectURL(f));
-//     return [...existingGallery, ...newPreviews];
-//   }, [galleryFiles, user?.gallery, deletedGallery]);
-
-//   // cleanup previews when files change/unmount
-//   useEffect(() => {
-//     return () => {
-//       if (logoFile) URL.revokeObjectURL(logoPreview);
-//       bannerFiles.forEach((file) => {
-//         if (file instanceof File) {
-//           URL.revokeObjectURL(URL.createObjectURL(file));
-//         }
-//       });
-//       galleryFiles.forEach((file) => {
-//         if (file instanceof File) {
-//           URL.revokeObjectURL(URL.createObjectURL(file));
-//         }
-//       });
-//     };
-//   }, [logoFile, bannerFiles, galleryFiles]);
-
-//   // fetch profile on mount
-//   useEffect(() => {
-//     dispatch(getProfile());
-//   }, [dispatch]);
-
-//   // populate form when user loads
-//   useEffect(() => {
-//     if (user) {
-//       setForm({
-//         name: user.name || "",
-//         email: user.email || "",
-//         phone: user.phone || "",
-//         businessName: user.businessName || "",
-//       });
-//       setLogoFile(null);
-//       setBannerFiles([]);
-//       setGalleryFiles([]);
-//       setDeletedBanners([]);
-//       setDeletedGallery([]);
-//     }
-//   }, [user]);
-
-//   // clear messages
-//   useEffect(() => {
-//     if (success || error) {
-//       const timer = setTimeout(() => dispatch(clearProfileState()), 3000);
-//       return () => clearTimeout(timer);
-//     }
-//   }, [success, error, dispatch]);
-
-//   // handle text input
-//   const handleChange = (e) =>
-//     setForm({ ...form, [e.target.name]: e.target.value });
-
-//   // file input handlers
-//   const handleLogoChange = (e) => {
-//     const file = e.target.files[0];
-//     if (file && file.type.startsWith("image/")) {
-//       setLogoFile(file);
-//     }
-//   };
-
-//   const handleBannerChange = (e) => {
-//     const files = Array.from(e.target.files).filter((f) =>
-//       f.type.startsWith("image/")
-//     );
-//     setBannerFiles((prevFiles) => [...prevFiles, ...files]);
-//   };
-
-//   const handleGalleryChange = (e) => {
-//     const files = Array.from(e.target.files).filter((f) =>
-//       f.type.startsWith("image/")
-//     );
-//     setGalleryFiles((prevFiles) => [...prevFiles, ...files]);
-//   };
-
-//   // Delete handlers
-//   const handleDeleteBanner = (index) => {
-//     const existingBannerCount = (user?.banner || []).length - deletedBanners.length;
-    
-//     if (index < existingBannerCount) {
-//       // It's an existing banner - add to deleted list
-//       const actualIndex = (user?.banner || [])
-//         .map((_, idx) => idx)
-//         .filter(idx => !deletedBanners.includes(idx))[index];
-//       setDeletedBanners(prev => [...prev, actualIndex]);
-//     } else {
-//       // It's a new file - remove from bannerFiles
-//       const newFileIndex = index - existingBannerCount;
-//       setBannerFiles(prev => prev.filter((_, idx) => idx !== newFileIndex));
-//     }
-//   };
-
-//   const handleDeleteGallery = (index) => {
-//     const existingGalleryCount = (user?.gallery || []).length - deletedGallery.length;
-    
-//     if (index < existingGalleryCount) {
-//       // It's an existing gallery item - add to deleted list
-//       const actualIndex = (user?.gallery || [])
-//         .map((_, idx) => idx)
-//         .filter(idx => !deletedGallery.includes(idx))[index];
-//       setDeletedGallery(prev => [...prev, actualIndex]);
-//     } else {
-//       // It's a new file - remove from galleryFiles
-//       const newFileIndex = index - existingGalleryCount;
-//       setGalleryFiles(prev => prev.filter((_, idx) => idx !== newFileIndex));
-//     }
-//   };
-
-//   // submit
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-
-//     const formData = new FormData();
-//     formData.append("name", form.name);
-//     formData.append("email", form.email);
-//     formData.append("phone", form.phone);
-//     formData.append("businessName", form.businessName);
-
-//     if (logoFile) formData.append("logo", logoFile);
-    
-//     // Append new banner files
-//     bannerFiles.forEach((file) => formData.append("banner", file));
-    
-//     // Append new gallery files
-//     galleryFiles.forEach((file) => formData.append("gallery", file));
-
-//     // Send deleted items info
-//     if (deletedBanners.length > 0) {
-//       formData.append("deletedBanners", JSON.stringify(deletedBanners));
-//     }
-//     if (deletedGallery.length > 0) {
-//       formData.append("deletedGallery", JSON.stringify(deletedGallery));
-//     }
-
-//     dispatch(updateProfile(formData));
-//     setIsEditing(false);
-//   };
-
-//   // cancel
-//   const handleCancel = () => {
-//     if (user) {
-//       setForm({
-//         name: user.name || "",
-//         email: user.email || "",
-//         phone: user.phone || "",
-//         businessName: user.businessName || "",
-//       });
-//     }
-//     setLogoFile(null);
-//     // Reset to original state
-//     setBannerFiles(user?.banner || []);
-//     setGalleryFiles(user?.gallery || []);
-//     setIsEditing(false);
-//   };
-
-//   // reusable field renderer
-//   const renderField = (label, name, value, type = "text") => (
-//     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-//       <label htmlFor={name} className="font-medium w-full sm:w-1/3">
-//         {label}
-//       </label>
-//       {isEditing ? (
-//         <input
-//           id={name}
-//           type={type}
-//           name={name}
-//           value={value}
-//           onChange={handleChange}
-//           className="border rounded px-3 py-2 w-full sm:w-2/3"
-//           required
-//         />
-//       ) : (
-//         <div className="w-full sm:w-2/3 bg-gray-100 p-2 rounded-md text-gray-700">
-//           {value || "Not set"}
-//         </div>
-//       )}
-//     </div>
-//   );
-
-//   return (
-//     <div className="w-full h-full p-6 bg-gray-100">
-//       <div className="relative p-6 w-5/6 max-w-3xl mx-auto bg-white rounded-xl shadow-md">
-//         {/* Header */}
-//         <div className="flex justify-between items-center mb-4">
-//           <h1 className="text-2xl font-semibold">Profile</h1>
-//           {!isEditing && (
-//             <FaEdit
-//               className="text-gray-500 hover:text-blue-600 cursor-pointer text-xl"
-//               onClick={() => setIsEditing(true)}
-//               title="Edit Profile"
-//             />
-//           )}
-//         </div>
-
-//         {/* Logo */}
-//         <div className="flex flex-col items-center mb-6">
-//           <div className="w-28 h-28">
-//             <img
-//               src={logoPreview || "https://image.similarpng.com/file/similarpng/very-thumbnail/2021/07/Chef-restaurant-logo-illustrations-template-on-transparent-background-PNG.png"}
-//               alt="Logo"
-//               className="w-full h-full object-cover rounded-full border border-gray-300 shadow"
-//             />
-//           </div>
-//           {isEditing && (
-//             <input
-//               type="file"
-//               accept="image/*"
-//               onChange={handleLogoChange}
-//               className="mt-3 border px-3 py-2 rounded"
-//             />
-//           )}
-//         </div>
-
-//         {/* Messages */}
-//         {loading && (
-//           <p className="text-center text-gray-500 mb-4">Loading...</p>
-//         )}
-//         {error && <p className="text-center text-red-500 mb-4">{error}</p>}
-//         {success && (
-//           <p className="text-center text-green-600 mb-4">
-//             Profile updated successfully!
-//           </p>
-//         )}
-
-//         {/* Form */}
-//         <form onSubmit={handleSubmit} className="space-y-5">
-//           {renderField("Full Name", "name", form.name)}
-//           {renderField("Business Name", "businessName", form.businessName)}
-//           {renderField("Phone", "phone", form.phone, "tel")}
-//           {renderField("Email", "email", form.email, "email")}
-
-//           {/* Gallery */}
-//           <div className="mb-6">
-//             <h2 className="font-medium mb-2">Gallery</h2>
-//             <div className="grid grid-cols-3 gap-3">
-//               {galleryPreviews?.map((g, idx) => (
-//                 <div key={idx} className="relative">
-//                   <img
-//                     src={g}
-//                     alt={`Gallery ${idx}`}
-//                     className="w-full h-24 object-cover rounded-md border"
-//                   />
-//                   {isEditing && (
-//                     <button
-//                       type="button"
-//                       onClick={() => handleDeleteGallery(idx)}
-//                       className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition-colors"
-//                       title="Delete Image"
-//                     >
-//                       <FaTrash size={10} />
-//                     </button>
-//                   )}
-//                 </div>
-//               ))}
-//             </div>
-//             {isEditing && (
-//               <input
-//                 type="file"
-//                 accept="image/*"
-//                 multiple
-//                 onChange={handleGalleryChange}
-//                 className="mt-2 border px-3 py-2 rounded"
-//               />
-//             )}
-//           </div>
-
-//           {/* Banner */}
-//           <div className="mb-6">
-//             <h2 className="font-medium mb-2">Banner</h2>
-//             <div className="flex flex-wrap gap-3">
-//               {bannerPreviews?.map((b, idx) => (
-//                 <div key={idx} className="relative">
-//                   <img
-//                     src={b}
-//                     alt={`Banner ${idx}`}
-//                     className="w-40 h-24 object-cover rounded-md border"
-//                   />
-//                   {isEditing && (
-//                     <button
-//                       type="button"
-//                       onClick={() => handleDeleteBanner(idx)}
-//                       className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition-colors"
-//                       title="Delete Image"
-//                     >
-//                       <FaTrash size={10} />
-//                     </button>
-//                   )}
-//                 </div>
-//               ))}
-//             </div>
-//             {isEditing && (
-//               <input
-//                 type="file"
-//                 accept="image/*"
-//                 multiple
-//                 onChange={handleBannerChange}
-//                 className="mt-2 border px-3 py-2 rounded"
-//               />
-//             )}
-//           </div>
-
-//           {isEditing && (
-//             <div className="flex justify-center gap-4 pt-6">
-//               <button
-//                 type="submit"
-//                 disabled={loading}
-//                 className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-all disabled:opacity-50"
-//               >
-//                 Save Changes
-//               </button>
-//               <button
-//                 type="button"
-//                 onClick={handleCancel}
-//                 disabled={loading}
-//                 className="bg-gray-300 text-gray-800 px-6 py-2 rounded-lg hover:bg-gray-400 transition-all disabled:opacity-50"
-//               >
-//                 Cancel
-//               </button>
-//             </div>
-//           )}
-//         </form>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default ProfilePage;

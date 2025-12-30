@@ -30,6 +30,7 @@ export const getMenu = async (req, res) => {
       slug: user.slug,
       address: user.address || '',
       phone: user.phone || '',
+      gallery: user.gallery || '',
     };
 
     res.json({ restaurant: publicUser, menuItems: items });

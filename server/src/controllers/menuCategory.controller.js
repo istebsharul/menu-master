@@ -5,6 +5,7 @@ export const createCategory = async (req, res) => {
   try {
     const { name } = req.body;
     const userId = req.user._id;
+    logger.info(name, userId);
 
     if (!name) {
       logger.warn('❌ Category creation failed: name is missing');
@@ -19,6 +20,38 @@ export const createCategory = async (req, res) => {
   } catch (error) {
     logger.error(`❌ Error creating category: ${error.message}`);
     res.status(500).json({ message: 'Failed to create category' });
+  }
+};
+
+export const updateCategory = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { id } = req.params;
+    const { name } = req.body;
+
+    // Validation
+    if (!name || !name.trim()) {
+      logger.warn('❌ Category update failed: name is missing');
+      return res.status(400).json({ message: 'Name is required' });
+    }
+
+    // Update category (user scoped)
+    const category = await MenuCategory.findOneAndUpdate(
+      { _id: id, userId },
+      { name: name.trim() },
+      { new: true }
+    );
+
+    if (!category) {
+      logger.warn(`⚠️ Category not found or unauthorized update: ${id}`);
+      return res.status(404).json({ message: 'Category not found' });
+    }
+
+    logger.info(`✏️ Category updated: ${category.name} by user ${userId}`);
+    res.json(category);
+  } catch (error) {
+    logger.error(`❌ Error updating category: ${error.message}`);
+    res.status(500).json({ message: 'Failed to update category' });
   }
 };
 

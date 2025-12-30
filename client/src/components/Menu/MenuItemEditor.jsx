@@ -4,6 +4,15 @@ import { RxCross2 } from "react-icons/rx";
 
 const TAG_OPTIONS = ["Best Seller", "Veg", "Non Veg", "Spicy", "Chef's Special"];
 
+const TAG_CONFIG = {
+  "Best Seller": { emoji: "⭐" },
+  "Veg": { emoji: "🟢" },
+  "Non Veg": { emoji: "🔴" },
+  "Spicy": { emoji: "🌶️" },
+  "Chef's Special": { emoji: "👨‍🍳" },
+};
+
+
 const MenuItemEditor = ({
   editRow,
   categories,
@@ -35,7 +44,7 @@ const MenuItemEditor = ({
   return (
     <div className="max-w-lg w-full bg-white rounded-xl border border-gray-200 p-4 flex gap-4 items-start shadow-inner">
       {/* Image Upload / Preview */}
-      <div className="w-1/3 h-full relative">
+      {/* <div className="w-1/3 h-full relative">
         <input
           type="file"
           accept="image/*"
@@ -67,30 +76,82 @@ const MenuItemEditor = ({
             </div>
           </div>
         ) : (
-          <div className="w-full h-full absolute inset-0 flex flex-col justify-center items-center gap-2 bg-gray-100/50">
-            <FaUpload className="text-green-400 text-4xl z-100" />
-            <p className="text-xs">Click to Upload</p>
+          <div className="w-full h-full absolute inset-1 flex flex-col justify-center items-center gap-2 bg-blue-100/50 z-100">
+            <FaUpload className="text-green-400 text-4xl" />
+            <p className="text-xs bg-red-400">Click to Upload</p>
+          </div>
+        )}
+      </div> */}
+
+      {/* Image Upload / Preview */}
+      <div className="w-1/3 h-32 relative rounded overflow-hidden border">
+
+        {/* Invisible file input (click layer) */}
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => {
+            const file = e.target.files[0];
+            if (file) {
+              setEditRow((prev) => ({ ...prev, imageUrl: file }));
+              setPreviewImage(URL.createObjectURL(file));
+            }
+          }}
+          className="absolute inset-0 opacity-0 cursor-pointer z-20"
+        />
+
+        {/* Image preview */}
+        {previewImage ? (
+          <img
+            src={previewImage}
+            alt="preview"
+            className="w-full h-full object-cover"
+          />
+        ) : editRow.imageUrl ? (
+          <>
+            <img
+              src={editRow.imageUrl}
+              alt={editRow.name}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-black/30 text-white z-10">
+              <FaUpload className="text-3xl" />
+              <p className="text-xs">Click to Upload</p>
+            </div>
+          </>
+        ) : (
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-blue-100/60 z-10">
+            <FaUpload className="text-green-500 text-4xl" />
+            <p className="text-xs px-2 py-0.5 rounded">
+              Click to Upload
+            </p>
           </div>
         )}
       </div>
+
 
       {/* Editable Fields */}
       <div className="w-full flex flex-col flex-1 justify-between">
         <div className="flex flex-col gap-2">
 
-        {/* Tags - multiple checkboxes */}
+          {/* Tags - multiple checkboxes */}
           <div className="flex flex-wrap gap-1">
-            {TAG_OPTIONS.map((tag) => (
-              <label
-                key={tag}
-                onClick={() => handleTagChange(tag)}
-                className={`flex items-center gap-1 text-xs border px-2 py-0.2 rounded-full cursor-pointer 
-    ${editRow?.tags?.includes(tag) ? 'bg-orange-400 text-white' : ''}
-  `}
-              >
-                {tag}
-              </label>
-            ))}
+            {TAG_OPTIONS.map((tag) => {
+              const isSelected = editRow?.tags?.includes(tag);
+
+              return (
+                <label
+                  key={tag}
+                  onClick={() => handleTagChange(tag)}
+                  className={`flex items-center gap-1 text-xs border px-2 py-0.5 rounded-full cursor-pointer
+          ${isSelected ? "bg-orange-400 text-white" : "bg-white text-gray-700"}
+        `}
+                >
+                  <span>{TAG_CONFIG[tag]?.emoji}</span>
+                  <span>{tag}</span>
+                </label>
+              );
+            })}
           </div>
 
           <div className="w-full flex justify-center items-center gap-2">
@@ -100,9 +161,8 @@ const MenuItemEditor = ({
               onChange={(e) =>
                 setEditRow((p) => ({ ...p, name: e.target.value }))
               }
-              className={`w-full border px-1 rounded text-sm ${
-                errors?.name ? "border-red-500" : "border-gray-300"
-              }`}
+              className={`w-full border px-1 rounded text-sm ${errors?.name ? "border-red-500" : "border-gray-300"
+                }`}
               placeholder="Name"
             />
             {/* Actions */}
@@ -130,9 +190,8 @@ const MenuItemEditor = ({
             onChange={(e) =>
               setEditRow((p) => ({ ...p, categoryId: e.target.value }))
             }
-            className={`border rounded w-min p-0.5 text-sm ${
-              errors?.categoryId ? "border-red-500" : "border-gray-300"
-            }`}
+            className={`border rounded w-min p-0.5 text-sm ${errors?.categoryId ? "border-red-500" : "border-gray-300"
+              }`}
           >
             <option value="">Select category</option>
             {categories.map((cat) => (
@@ -157,9 +216,8 @@ const MenuItemEditor = ({
             onChange={(e) =>
               setEditRow((p) => ({ ...p, price: e.target.value }))
             }
-            className={`text-sm border p-1 rounded w-fit ${
-              errors?.price ? "border-red-500" : "border-gray-300"
-            }`}
+            className={`text-sm border p-1 rounded w-fit ${errors?.price ? "border-red-500" : "border-gray-300"
+              }`}
             placeholder="Price"
           />
         </div>

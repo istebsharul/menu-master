@@ -6,6 +6,9 @@ import {
   addMenuItem,
   updateMenuItem,
   deleteMenuItem,
+  addCategory,
+  updateCategory,
+  deleteCategory
 } from "../../redux/slices/menuSlice";
 
 import MenuHeader from "./MenuHeader";
@@ -15,6 +18,8 @@ import MenuItemCard from "./MenuItemCard";
 import MenuItemEditor from "./MenuItemEditor";
 import MenuItemListView from "./MenuItemListView";
 import MenuItemEditorListView from "./MenuItemEditorListView";
+import AddNewDropdown from "./AddNewDropdown";
+import ManageCategoryModal from "./ManageCategoryModal";
 
 const Menu = () => {
   const dispatch = useDispatch();
@@ -24,8 +29,10 @@ const Menu = () => {
 
   const [view, setView] = useState('grid');
   const [activeCategory, setActiveCategory] = useState("All");
+  const [activeTags, setActiveTags] = useState([]); // array instead of string
   const [availability, setAvailability] = useState({});
   const [sortBy, setSortBy] = useState("default");
+  const [openCategoryModal, setOpenCategoryModal] = useState(false);
 
   // Editing state
   const [editingId, setEditingId] = useState(null);
@@ -56,7 +63,7 @@ const Menu = () => {
     }
   }, [menuItems]);
 
-     // Frontend validation function
+  // Frontend validation function
   const validateForm = () => {
     const newErrors = {};
 
@@ -100,7 +107,7 @@ const Menu = () => {
     formData.append("description", editRow.description);
     formData.append("categoryId", editRow.categoryId);
     formData.append("available", editRow.available);
-    formData.append("tags",editRow.tags);
+    formData.append("tags", editRow.tags);
 
     console.log(formData);
 
@@ -200,18 +207,31 @@ const Menu = () => {
           activeCategory={activeCategory}
           setActiveCategory={setActiveCategory}
         />
+
         <div className="flex justify-between items-center gap-4">
           <SortActions
             sortBy={sortBy}
             setSortBy={setSortBy}
             handleAddNewItem={handleAddNewItem}
           />
-          <button
+          {/* <button
             onClick={handleAddNewItem}
             className="px-4 py-1 border border-[#0c7054] text-[#0c7054] rounded-lg"
           >
             + Add new
-          </button>
+          </button> */}
+          <AddNewDropdown
+            onAddItem={handleAddNewItem}
+            onAddCategory={() => setOpenCategoryModal(true)}
+          />
+          <ManageCategoryModal
+            isOpen={openCategoryModal}
+            onClose={() => setOpenCategoryModal(false)}
+            categories={categories}
+            onCreate={(data) => dispatch(addCategory(data))}
+            onUpdate={(data) => dispatch(updateCategory(data))}
+            onDelete={(id) => dispatch(deleteCategory(id))}
+          />
         </div>
       </div>
 

@@ -28,136 +28,64 @@ export const getProfile = async (req, res) => {
   }
 };
 
-// Update Profile
-// export const updateProfile = async (req, res) => {
-//   try {
-//     const { name, businessName, phone, email, logo, banner, gallery } = req.body;
-//     logger.info(`Attempting to update profile for user ID: ${req.user.id}`);
-
-//     const user = await User.findById(req.user.id);
-//     if (!user) {
-//       logger.warn(`User not found: ${req.user.id}`);
-//       return res.status(404).json({ message: 'User not found' });
-//     }
-
-//     // Update fields
-//     user.name = name || user.name;
-//     user.businessName = businessName || user.businessName;
-//     user.phone = phone || user.phone;
-//     user.email = email || user.email;
-//     user.logo = logo || user.logo;
-//     user.banner = banner || user.banner;
-//     user.gallery = gallery?.length ? gallery : user.gallery;
-
-//     await user.save();
-
-//     logger.info(`✅ Updated profile for user: ${user.email}`);
-
-//     res.json({
-//       id: user._id,
-//       name: user.name,
-//       email: user.email,
-//       businessName: user.businessName,
-//       phone: user.phone,
-//       logo: user.logo,
-//       banner: user.banner,
-//       gallery: user.gallery,
-//     });
-//   } catch (error) {
-//     logger.error(`❌ Failed to update profile: ${error.message}`);
-//     res.status(500).json({ message: 'Failed to update profile' });
-//   }
-// };
-
-// export const updateProfile = async (req, res) => {
-//   try {
-//     console.log(req.body);
-//     const { name, businessName, phone, email, logo, banner, gallery } = req.body;
-//     logger.info(`Attempting to update profile for user ID: ${req.user.id}`);
-
-//     const user = await User.findById(req.user.id);
-//     if (!user) {
-//       logger.warn(`User not found: ${req.user.id}`);
-//       return res.status(404).json({ message: "User not found" });
-//     }
-
-//     // Update fields
-//     user.name = name || user.name;
-//     user.businessName = businessName || user.businessName;
-//     user.phone = phone || user.phone;
-//     user.email = email || user.email;
-
-//     // Handle Logo upload
-//     if (logo && logo !== user.logo) {
-//       const uploadedLogo = await uploadImage(logo, "logos");
-//       user.logo = uploadedLogo.url;
-//     }
-
-//     // Handle Banner upload
-//     if (banner && banner !== user.banner) {
-//       const uploadedBanner = await uploadImage(banner, "banners");
-//       user.banner = uploadedBanner.url;
-//     }
-
-//     // Handle Gallery upload (multiple images)
-//     if (gallery?.length) {
-//       const uploadedGallery = [];
-//       for (const img of gallery) {
-//         const uploadedImg = await uploadImage(img, "gallery");
-//         uploadedGallery.push(uploadedImg.url);
-//       }
-//       user.gallery = uploadedGallery;
-//     }
-
-//     await user.save();
-
-//     logger.info(`✅ Updated profile for user: ${user.email}`);
-
-//     res.json({
-//       id: user._id,
-//       name: user.name,
-//       email: user.email,
-//       businessName: user.businessName,
-//       phone: user.phone,
-//       logo: user.logo,
-//       banner: user.banner,
-//       gallery: user.gallery,
-//     });
-//   } catch (error) {
-//     logger.error(`❌ Failed to update profile: ${error.message}`);
-//     res.status(500).json({ message: "Failed to update profile" });
-//   }
-// };
-
 export const updateProfile = async (req, res) => {
   try {
-    const { name, email, phone, businessName, address } = req.body;
+    const {
+      name,
+      email,
+      phone,
+      businessName,
+      address,
+      deletedBanners,
+      deletedGallery
+    } = req.body;
 
-    const logo = req.files?.logo ? req.files.logo[0].path : null;
-    const banner = req.files?.banner ? req.files.banner[0].path : null;
-    const gallery = req.files?.gallery ? req.files.gallery.map(f => f.path) : [];
+    const removeBanners = deletedBanners ? JSON.parse(deletedBanners) : [];
+    const removeGallery = deletedGallery ? JSON.parse(deletedGallery) : [];
 
-    const user = await User.findByIdAndUpdate(
-      req.user.id,
-      {
-        name,
-        email,
-        phone,
-        businessName,
-        address,
-        ...(logo && { logo }),
-        ...(banner && { banner }),
-        ...(gallery.length && { gallery }),
-      },
-      { new: true }
-    );
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ success: false });
+    }
+
+    // Remove deleted images
+    user.banner = user.banner.filter(img => !removeBanners.includes(img));
+    user.gallery = user.gallery.filter(img => !removeGallery.includes(img));
+
+    // Add new uploads
+    if (req.files?.logo) {
+      user.logo = req.files.logo[0].path;
+    }
+    
+    console.log("Banner Image Payload", req.files?.banner);
+
+    if (req.files?.banner?.length) {
+      const newBanners = req.files.banner.map(f => f.path);
+      user.banner = Array.from(new Set([...user.banner, ...newBanners]));
+    }
+
+    if (req.files?.gallery) {
+      user.gallery.push(...req.files.gallery.map(f => f.path));
+    }
+    console.log("USER GALLERY",user.gallery);
+    
+    // Update fields
+    user.name = name;
+    user.email = email;
+    user.phone = phone;
+    user.businessName = businessName;
+    user.address = address;
+
     console.log(user);
+    await user.save();
+
     res.json({ success: true, user });
   } catch (err) {
-    console.error("Error",err);
+    console.error("Error", err);
     res.status(500).json({ success: false, message: "Update failed" });
   }
 };
+
 
 export const registerUser = async (req, res) => {
   try {

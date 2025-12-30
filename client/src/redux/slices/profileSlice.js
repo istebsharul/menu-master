@@ -16,11 +16,11 @@ export const getProfile = createAsyncThunk('profile/getProfile', async (_, thunk
 export const updateProfile = createAsyncThunk('profile/updateProfile', async (updatedData, thunkAPI) => {
   try {
     const response = await api.put('/auth/profile', updatedData);
-    console.log(response.data);
+    console.log("Profile",response.data);
     return response.data.user;
   } catch (error) {
-    console.log(error);
-    return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to update profile');
+    console.log(error?.response?.data);
+    return thunkAPI.rejectWithValue(error.response?.data || 'Failed to update profile');
   }
 });
 

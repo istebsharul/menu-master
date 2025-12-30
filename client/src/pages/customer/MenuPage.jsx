@@ -13,16 +13,17 @@ const MenuPage = () => {
   const { slug } = useParams();
   const dispatch = useDispatch();
   const [category, setCategory] = useState(null);
-  
+  const [selectedTags, setSelectedTags] = useState([]);
+
   const { restaurant, categories, items, loading, error } = useSelector(
     (state) => state.publicMenu
   );
 
   const [filteredItems, setFilteredItems] = useState(items);
 
-  useEffect(()=>{
+  useEffect(() => {
     console.log(categories);
-  },[categories]);
+  }, [categories]);
 
   useEffect(() => {
     if (slug) {
@@ -33,17 +34,29 @@ const MenuPage = () => {
   // Log when restaurant changes
   useEffect(() => {
     console.log("Restaurant updated categories:", categories);
-    console.log("Hlwkn",category);
+    console.log("Hlwkn", category);
   }, [category, categories]);
 
-  useEffect(()=>{
-    if(category){
-      const filteredItems = items.filter((item) => item?.categoryId?.name === category);
-      setFilteredItems(filteredItems);
-    }else{
-      setFilteredItems(items);
+  useEffect(() => {
+    let result = items;
+
+    // Category filter
+    if (category) {
+      result = result.filter(
+        (item) => item?.categoryId?.name === category
+      );
     }
-  },[category,items]);
+
+    // Tags filter (MULTI)
+    if (selectedTags.length > 0) {
+      result = result.filter((item) =>
+        selectedTags.every((tag) => item?.tags?.includes(tag))
+      );
+    }
+
+    setFilteredItems(result);
+  }, [category, selectedTags, items]);
+
 
   if (loading) return <p className="text-center p-4">Loading menu...</p>;
   if (error) return <p className="text-center p-4 text-red-500">{error}</p>;
@@ -51,9 +64,14 @@ const MenuPage = () => {
   return (
     <>
       {/* <Header logo={restaurant?.logo} /> */}
-      <Header logo={restaurant?.logo} />
+      <Header logo={restaurant?.logo} gallery={restaurant?.gallery} />
       <FeaturedItems items={items} />
-      <CategoriesFilter categories={categories} setCategory={setCategory}/>
+      <CategoriesFilter
+        categories={categories}
+        setCategory={setCategory}
+        selectedTags={selectedTags}
+        setSelectedTags={setSelectedTags}
+      />
       <Items items={filteredItems} />
     </>
   );

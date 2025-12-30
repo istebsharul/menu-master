@@ -17,7 +17,7 @@ const featuredItems = [
 
 const FeaturedItems = () => {
     return (
-        <div className="max-w-6xl mx-auto md:px-4 md:py-8">
+        <div className="max-w-6xl mx-auto md:py-8">
             <div className="px-4 py-4 flex items-center gap-2 text-[#0c7054] font-light text-xl">
                 {/* <FaHeart className="text-red-500 text-2xl"/> */}
                 Recommended for You
@@ -27,12 +27,12 @@ const FeaturedItems = () => {
                     {featuredItems.map((item, index) => (
                         <div
                             key={index}
-                            className="flex flex-col items-center flex-shrink-0 sm:flex-shrink"
+                            className="flex flex-col items-center flex-shrink-0 sm:flex-shrink p-1"
                         >
                             <img
                                 src={item.img}
                                 alt={item.name}
-                                className="w-18 h-18 object-cover rounded-full shadow-md hover:scale-105 transition-transform"
+                                className="w-20 h-20 object-cover rounded-full shadow-md hover:scale-105 transition-transform"
                             />
                             <p className="mt-2 text-xs font-medium">{item.name}</p>
                         </div>
