@@ -13,7 +13,7 @@ const QRPage = () => {
     );
   }
 
-  const qrLink = `http://localhost:5173/s/${user.slug}`;
+  const qrLink = `${import.meta.env.VITE_BASE_URL}/s/${user.slug}`;
 
   return (
     <div className="w-full h-full p-6 bg-gray-100 flex flex-col items-center">
