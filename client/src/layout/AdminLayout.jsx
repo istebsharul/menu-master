@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Outlet, NavLink } from "react-router-dom";
 import { FaHome, FaUtensils, FaUser, FaQrcode, FaBars } from "react-icons/fa";
 import { TbLayoutSidebarRightCollapse, TbLayoutSidebarLeftCollapse } from "react-icons/tb";
-import Header from "../components/admin/Header";
+import Header from "../components/Admin/Header";
 
 const HEADER_HEIGHT = 56; // Tailwind h-16 = 64px
 

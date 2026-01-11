@@ -2,20 +2,22 @@ import React from "react";
 import { FaHeart } from "react-icons/fa";
 
 
-const featuredItems = [
-    { name: "Mandi", img: "https://t4.ftcdn.net/jpg/07/75/11/61/360_F_775116148_auR8R1TmdkuB3wKhCd1DRKrPDbebnVXN.jpg" },
-    { name: "Masala Tandoori", img: "https://www.cubesnjuliennes.com/wp-content/uploads/2022/12/Tandoori-Chicken-Recipe.jpg" },
-    { name: "Milk Cake", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFDzaduscbVLnvPZJoRYN4ewjEPAUwWV_l3g&s" },
-    { name: "Pulao", img: "https://www.indianveggiedelight.com/wp-content/uploads/2019/07/veg-pulao-featured.jpg" },
-    { name: "Biryani", img: "https://www.cubesnjuliennes.com/wp-content/uploads/2020/07/Chicken-Biryani-Recipe.jpg" },
-    { name: "Mandi", img: "https://t4.ftcdn.net/jpg/07/75/11/61/360_F_775116148_auR8R1TmdkuB3wKhCd1DRKrPDbebnVXN.jpg" },
-    { name: "Masala Tandoori", img: "https://www.cubesnjuliennes.com/wp-content/uploads/2022/12/Tandoori-Chicken-Recipe.jpg" },
-    { name: "Milk Cake", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFDzaduscbVLnvPZJoRYN4ewjEPAUwWV_l3g&s" },
-    { name: "Pulao", img: "https://www.indianveggiedelight.com/wp-content/uploads/2019/07/veg-pulao-featured.jpg" },
-    { name: "Biryani", img: "https://www.cubesnjuliennes.com/wp-content/uploads/2020/07/Chicken-Biryani-Recipe.jpg" },
-];
+// const featuredItems = [
+//     { name: "Mandi", img: "https://t4.ftcdn.net/jpg/07/75/11/61/360_F_775116148_auR8R1TmdkuB3wKhCd1DRKrPDbebnVXN.jpg" },
+//     { name: "Masala Tandoori", img: "https://www.cubesnjuliennes.com/wp-content/uploads/2022/12/Tandoori-Chicken-Recipe.jpg" },
+//     { name: "Milk Cake", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFDzaduscbVLnvPZJoRYN4ewjEPAUwWV_l3g&s" },
+//     { name: "Pulao", img: "https://www.indianveggiedelight.com/wp-content/uploads/2019/07/veg-pulao-featured.jpg" },
+//     { name: "Biryani", img: "https://www.cubesnjuliennes.com/wp-content/uploads/2020/07/Chicken-Biryani-Recipe.jpg" },
+//     { name: "Mandi", img: "https://t4.ftcdn.net/jpg/07/75/11/61/360_F_775116148_auR8R1TmdkuB3wKhCd1DRKrPDbebnVXN.jpg" },
+//     { name: "Masala Tandoori", img: "https://www.cubesnjuliennes.com/wp-content/uploads/2022/12/Tandoori-Chicken-Recipe.jpg" },
+//     { name: "Milk Cake", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFDzaduscbVLnvPZJoRYN4ewjEPAUwWV_l3g&s" },
+//     { name: "Pulao", img: "https://www.indianveggiedelight.com/wp-content/uploads/2019/07/veg-pulao-featured.jpg" },
+//     { name: "Biryani", img: "https://www.cubesnjuliennes.com/wp-content/uploads/2020/07/Chicken-Biryani-Recipe.jpg" },
+// ];
 
-const FeaturedItems = () => {
+const FeaturedItems = ({ featuredItems = [] }) => {
+    if (!Array.isArray(featuredItems)) return null;
+
     return (
         <div className="max-w-6xl mx-auto md:py-8">
             <div className="px-4 py-4 flex items-center gap-2 text-[#0c7054] font-light text-xl">
@@ -30,11 +32,11 @@ const FeaturedItems = () => {
                             className="flex flex-col items-center flex-shrink-0 sm:flex-shrink p-1"
                         >
                             <img
-                                src={item.img}
+                                src={item.imageUrl}
                                 alt={item.name}
                                 className="w-20 h-20 object-cover rounded-full shadow-md hover:scale-105 transition-transform"
                             />
-                            <p className="mt-2 text-xs font-medium">{item.name}</p>
+                            <p className="w-min mt-2 text-xs font-medium w-full">{item.name}</p>
                         </div>
                     ))}
                 </div>

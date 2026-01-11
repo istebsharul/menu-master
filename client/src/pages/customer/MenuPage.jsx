@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPublicMenu } from "../../redux/slices/publicMenuSlice";
@@ -20,10 +20,24 @@ const MenuPage = () => {
   );
 
   const [filteredItems, setFilteredItems] = useState(items);
+  const [bestSeller, setBestSeller] = useState();
+
+  const bestSellerCarouselData = useMemo(() => {
+    return items
+      .filter(dish => dish.tags?.includes("Best Seller"))
+      .map(dish => ({
+        id: dish._id,
+        name: dish.name,
+        imageUrl: dish.imageUrl,
+      }));
+  }, [items]);
+
 
   useEffect(() => {
-    console.log(categories);
-  }, [categories]);
+    setBestSeller(bestSellerCarouselData);
+    console.log("Hlelllllewflwnlvnw",bestSellerCarouselData);
+    console.log(typeof bestSellerCarouselData);
+  },[bestSellerCarouselData]);
 
   useEffect(() => {
     if (slug) {
@@ -65,7 +79,7 @@ const MenuPage = () => {
     <>
       {/* <Header logo={restaurant?.logo} /> */}
       <Header logo={restaurant?.logo} gallery={restaurant?.gallery} />
-      <FeaturedItems items={items} />
+      <FeaturedItems featuredItems={bestSeller} />
       <CategoriesFilter
         categories={categories}
         setCategory={setCategory}
