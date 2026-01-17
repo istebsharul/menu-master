@@ -6,7 +6,7 @@ export default function Header() {
     <header className="bg-white/90 backdrop-blur supports-[backdrop-filter]:bg-white/70 border-b border-gray-100 fixed w-full top-0 z-50">
       <div className="max-w-7xl mx-auto px-6 py-2 flex items-center justify-between">
         <a href="#top" className="flex items-center space-x-2">
-          <img className="w-40" src={logo} alt="Logo" />
+          <img className="w-48" src={logo} alt="Logo" />
         </a>
         <nav className="hidden md:flex items-center gap-8 text-sm">
           {["features","how","showcase","pricing","faq"].map(id => (

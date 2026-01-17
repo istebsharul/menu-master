@@ -48,7 +48,7 @@ const DashboardHeader = () => {
         {/* Logo */}
         <div
           onClick={() => navigate('/dashboard')}
-          className="md:w-1/9 2xl:w-1/12 w-3/7 flex items-center space-x-2 cursor-pointer pl-4"
+          className="md:w-1/9 2xl:w-1/12 w-1/2 flex items-center space-x-2 cursor-pointer pl-4"
         >
           <img src={logo} />
         </div>

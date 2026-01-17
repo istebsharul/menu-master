@@ -8,7 +8,9 @@ import {
   deleteMenuItem,
   addCategory,
   updateCategory,
-  deleteCategory
+  deleteCategory,
+  toggleMenuAvailability,
+  toggleMenuAvailabilityOptimistic,
 } from "../../redux/slices/menuSlice";
 
 import MenuHeader from "./MenuHeader";
@@ -82,13 +84,30 @@ const Menu = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  // const toggleAvailability = (id, item) => {
+  //   dispatch(
+  //     updateMenuItem({
+  //       id,
+  //       updatedData: { ...item, available: !item.available },
+  //     })
+  //   );
+  // };
   const toggleAvailability = (id, item) => {
+    // ⚡ Optimistic update
+    dispatch(toggleMenuAvailabilityOptimistic(id));
+
+    // 🔄 Backend sync
     dispatch(
-      updateMenuItem({
+      toggleMenuAvailability({
         id,
-        updatedData: { ...item, available: !item.available },
+        available: !item.available,
       })
-    );
+    )
+      .unwrap()
+      .catch(() => {
+        // 🔁 Rollback if API fails
+        dispatch(toggleMenuAvailabilityOptimistic(id));
+      });
   };
 
   const handleSaveItem = () => {

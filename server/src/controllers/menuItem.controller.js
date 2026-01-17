@@ -105,6 +105,47 @@ export const updateItem = async (req, res) => {
   }
 };
 
+export const updateAvailability = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const itemId = req.params.id;
+    const { available } = req.body;
+
+    if (typeof available !== 'boolean') {
+      logger.warn(
+        `Update availability failed: Invalid value for item ${itemId} by user ${userId}`
+      );
+      return res.status(400).json({ message: 'Available must be a boolean' });
+    }
+
+    const item = await MenuItem.findOneAndUpdate(
+      { _id: itemId, userId },
+      { available },
+      { new: true }
+    );
+
+    if (!item) {
+      logger.warn(
+        `Update availability failed: Item not found ${itemId} for user ${userId}`
+      );
+      return res.status(404).json({ message: 'Item not found' });
+    }
+
+    logger.info(
+      `Item availability updated: ${itemId} → ${available} by user ${userId}`
+    );
+
+    res.json({
+      message: 'Availability updated',
+      available: item.available,
+    });
+  } catch (error) {
+    logger.error(
+      `Error updating availability for item ${req.params.id} by user ${req.user._id}: ${error.message}`
+    );
+    res.status(500).json({ message: 'Failed to update availability' });
+  }
+};
 
 // export const updateItem = async (req, res) => {
 //   try {

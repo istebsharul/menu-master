@@ -107,6 +107,18 @@ export const deleteMenuItem = createAsyncThunk(
   }
 );
 
+export const toggleMenuAvailability = createAsyncThunk(
+  'menu/toggleAvailability',
+  async ({ id, available }, thunkAPI) => {
+    try {
+      await api.patch(`/items/availability/${id}`, { available });
+      return { id, available };
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ id });
+    }
+  }
+);
+
 const initialState = {
   categories: [],
   menuItems: [],
@@ -122,6 +134,12 @@ const menuSlice = createSlice({
     clearMenuError(state) {
       state.error = null;
     },
+    toggleMenuAvailabilityOptimistic(state, action) {
+      const item = state.menuItems.find(i => i._id === action.payload);
+      if (item) {
+        item.available = !item.available;
+      }
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -225,16 +243,24 @@ const menuSlice = createSlice({
       .addCase(deleteMenuItem.pending, (state) => {
         state.loading = true;
       })
-    .addCase(deleteMenuItem.fulfilled, (state, action) => {
-      state.loading = false;
-      state.menuItems = state.menuItems.filter(item => item._id !== action.payload);
-    })
-    .addCase(deleteMenuItem.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.payload;
-    });
-},
+      .addCase(deleteMenuItem.fulfilled, (state, action) => {
+        state.loading = false;
+        state.menuItems = state.menuItems.filter(item => item._id !== action.payload);
+      })
+      .addCase(deleteMenuItem.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // Toggle Availability
+      .addCase(toggleMenuAvailability.rejected, (state, action) => {
+        const item = state.menuItems.find(i => i._id === action.payload.id);
+        if (item) {
+          item.available = !item.available; // rollback
+        }
+      })
+  },
 });
 
-export const { clearMenuError } = menuSlice.actions;
+export const { clearMenuError, toggleMenuAvailabilityOptimistic } = menuSlice.actions;
 export default menuSlice.reducer;

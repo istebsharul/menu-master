@@ -48,7 +48,7 @@ const AdminLayout = () => {
         </aside>
         {/* Main Content */}
         <main
-          className="w-full h-full flex-1 overflow-auto bg-gray-50 text-gray-900 m-0"
+          className="w-full h-full flex-1 overflow-auto bg-gray-100 text-gray-900 m-0 pb-12"
           style={{
             height: `calc(100vh - ${HEADER_HEIGHT}px)`,
           }}
@@ -57,7 +57,7 @@ const AdminLayout = () => {
         </main>
 
         {/* Mobile Bottom Navigation */}
-        <nav className="sm:hidden fixed bottom-0 left-0 right-0 bg-[#0c7054] text-white shadow-lg flex justify-around py-2 z-50">
+        <nav className="sm:hidden fixed bottom-0 left-0 right-0 bg-white text-white shadow-xl border flex justify-around py-2 z-50">
           <IconButton to="/dashboard" icon={FaHome} collapsed={true} />
           <IconButton to="/dashboard/menu" icon={FaUtensils} collapsed={true} />
           <IconButton to="/dashboard/qr" icon={FaQrcode} collapsed={true} />
@@ -75,7 +75,7 @@ const IconButton = ({ to, icon: Icon, text, collapsed }) => {
       to={to}
       className={({ isActive }) =>
         `flex items-center gap-3 p-3 rounded-lg transition-colors text-lg group 
-         ${isActive ? "text-[#0c7054] font-semibold" : "text-gray-700"} hover:text-[#0c7054]`
+         ${isActive ? "text-green-700 font-semibold" : "text-gray-700"} hover:text-[#0c7054]`
       }
     >
       <Icon className="text-inherit" /> {/* Inherit parent's color */}
@@ -86,78 +86,3 @@ const IconButton = ({ to, icon: Icon, text, collapsed }) => {
 
 
 export default AdminLayout;
-
-
-// import React from "react";
-// import { Outlet, NavLink } from "react-router-dom";
-// import { FaHome, FaUtensils, FaUser, FaQrcode } from "react-icons/fa";
-// import Header from "../components/admin/Header";
-
-// const HEADER_HEIGHT = 64; // Tailwind h-16 = 64px
-
-// const AdminLayout = () => {
-//   return (
-//     <div className="min-h-screen flex flex-col bg-gray-900">
-//       {/* Header */}
-//       <div className="h-16">
-//         <Header />
-//       </div>
-
-//       {/* Main Layout */}
-//       <div className="flex-1 flex flex-col sm:flex-row overflow-hidden">
-//         {/* Sidebar for Desktop & Tablet */}
-//         <aside
-//           className="hidden sm:flex sm:w-16 sm:m-2 bg-gray-800 text-white rounded-2xl shadow-md 
-//                      flex-col items-center justify-center"
-//           style={{
-//             height: `calc(100vh - ${HEADER_HEIGHT}px - 16px)`, // minus top+bottom margin (m-2 = 16px)
-//           }}
-//         >
-//           <nav className="flex flex-col gap-6 items-center py-4">
-//             <IconButton to="/dashboard" icon={<FaHome />} />
-//             <IconButton to="/dashboard/menu" icon={<FaUtensils />} />
-//             <IconButton to="/dashboard/qr" icon={<FaQrcode />} />
-//             <IconButton to="/dashboard/profile" icon={<FaUser />} />
-//           </nav>
-//         </aside>
-
-//         {/* Main Content */}
-//         <main
-//           className="flex-1 overflow-auto sm:rounded-l-2xl bg-gray-800"
-//           style={{
-//             height: `calc(100vh - ${HEADER_HEIGHT}px - 56px)`, // 56px for mobile nav
-//           }}
-//         >
-//           <Outlet />
-//         </main>
-
-//         {/* Mobile Bottom Navigation */}
-//         <nav
-//           className="sm:hidden fixed bottom-0 left-0 right-0 bg-gray-800 text-white shadow-lg flex justify-around py-2 z-50"
-//         >
-//           <IconButton to="/dashboard" icon={<FaHome />} />
-//           <IconButton to="/dashboard/menu" icon={<FaUtensils />} />
-//           <IconButton to="/dashboard/qr" icon={<FaQrcode />} />
-//           <IconButton to="/dashboard/profile" icon={<FaUser />} />
-//         </nav>
-//       </div>
-//     </div>
-//   );
-// };
-
-// // Sidebar & Mobile Nav icon button
-// const IconButton = ({ to, icon }) => {
-//   return (
-//     <NavLink
-//       to={to}
-//       className={({ isActive }) =>
-//         `p-3 rounded-lg hover:bg-gray-700 transition-colors text-xl flex justify-center items-center ${isActive ? "bg-gray-700" : ""
-//         }`
-//       }
-//     >
-//       {icon}
-//     </NavLink>
-//   );
-// };
-
-// export default AdminLayout;
