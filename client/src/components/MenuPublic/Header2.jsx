@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSelector } from "react-redux";
 
 const swipeConfidenceThreshold = 80;
 
@@ -7,15 +8,20 @@ const Header = ({ logo, gallery = [] }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const intervalRef = useRef(null);
 
-  const startAutoSlide = () => {
+  const startAutoSlide = () => { 
     clearInterval(intervalRef.current);
 
-    if (gallery.length <= 1) return;
+    if (gallery.length <= 1) return; 
 
     intervalRef.current = setInterval(() => {
       setActiveIndex((prev) => (prev + 1) % gallery.length);
     }, 4000);
   };
+
+// Adding state for primaryColor 
+// const primaryColor = useSelector((state)=> state.restaurant.primaryColor)
+const restaurant = useSelector((state) => state.restaurant);
+
 
   useEffect(() => {
     if (gallery.length) {
@@ -39,7 +45,7 @@ const Header = ({ logo, gallery = [] }) => {
   return (
     <div className="mx-auto space-y-4">
       {/* Logo */}
-      <div className="w-full flex justify-center items-center h-20 bg-[#0c7054]">
+      <div className="w-full flex justify-center items-center h-20"  style={{ backgroundColor: restaurant?.primaryColor ?? "#0b7054" }}>
         <img src={logo} alt="Logo" className="h-16 object-contain" />
       </div>
 

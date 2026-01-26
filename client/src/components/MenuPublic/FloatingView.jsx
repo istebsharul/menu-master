@@ -1,8 +1,15 @@
 import React, { useRef, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useSelector } from "react-redux";
 
 const FloatingView = ({ isOpen, onClose, item }) => {
   const floatingRef = useRef(null);
+
+  // Adding state for primaryColor 
+const primaryColor = useSelector((state)=> state.restaurant.primaryColor)
+const restaurant = useSelector((state) => state.restaurant);
+
+
 
   // Detect click outside
   useEffect(() => {
@@ -59,7 +66,7 @@ const FloatingView = ({ isOpen, onClose, item }) => {
             <h3 className="text-xl font-semibold text-gray-800">
               {item.name}
             </h3>
-            <p className="text-[#0c7054] font-bold">
+            <p className=" font-bold" style={{ color: restaurant?.primaryColor ?? "#0b7054" }}>
               ${item.price.toFixed(2)}
               {item.price && (
                 <span className="ml-2 text-gray-500 line-through text-sm">
@@ -67,8 +74,8 @@ const FloatingView = ({ isOpen, onClose, item }) => {
                 </span>
               )}
             </p>
-          </div>
-          <button onClick={onClose} className="w-full text-center p-2 rounded-xl bg-[#0c7054] text-white">
+          </div> 
+          <button onClick={onClose} className="w-full text-center p-2 rounded-xl  text-white" style={{ backgroundColor: restaurant?.primaryColor ?? "#0b7054" }}>
             Close
           </button>
         </div>

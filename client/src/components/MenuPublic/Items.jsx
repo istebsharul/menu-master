@@ -4,7 +4,7 @@ import CategoriesFilter from "./CategoriesFilter";
 import FloatingView from "./FloatingView";
 
 const dummyItems = [
-  {
+  {  
     image:
       "https://t4.ftcdn.net/jpg/07/75/11/61/360_F_775116148_auR8R1TmdkuB3wKhCd1DRKrPDbebnVXN.jpg",
     title: "Spicy Mexican Tacos",
@@ -13,10 +13,10 @@ const dummyItems = [
     badge: "",
     originalPrice: 9.99,
     discountedPrice: 7.99,
-    rating: 4.5,
-    reviews: 60,
+    rating: 4.5,  
+    reviews: 60,  
     isTrending: false,
-  },
+  }, 
   {
     image:
       "https://rppizzeria.com/web/image/product.template/75/image_1024?unique=0e417c7",
@@ -119,7 +119,7 @@ const Items = ({items}) => {
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
         item={selectedItem}
-      />
+      />  
     </>
   );
 };

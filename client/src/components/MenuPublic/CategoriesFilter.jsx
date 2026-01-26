@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { FaChevronDown } from "react-icons/fa";
 import { HiOutlineMenuAlt2 } from "react-icons/hi";
 // import { BiSolidCategory } from "react-icons/bi";
+import { useSelector } from "react-redux";
 
 const TAG_CONFIG = {
   "Best Seller": { emoji: "⭐" },
@@ -16,6 +17,11 @@ const CategoriesFilter = ({ categories, setCategory, selectedTags, setSelectedTa
   const [active, setActive] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
 
+  // Adding state for primaryColor 
+const primaryColor = useSelector((state)=> state.restaurant.primaryColor)
+const restaurant = useSelector((state) => state.restaurant);
+
+
   useEffect(() => {
     console.log(categories);
   }, [categories]);
@@ -27,7 +33,7 @@ const CategoriesFilter = ({ categories, setCategory, selectedTags, setSelectedTa
   return (
     <div className="sticky top-0 bg-white max-w-6xl mx-auto flex flex-col items-start justify-between px-4 py-4 gap-2 z-1 md:shadow-none shadow">
       <div className="w-full flex justify-between items-center">
-        <div className="flex items-center gap-2 text-[#0c7054] font-bold text-xl">
+        <div className="flex items-center gap-2  font-bold text-xl" style={{ color: restaurant?.primaryColor ?? "#0b7054" }}>
           {/* <BiSolidCategory className="text-xl" /> */}
           <HiOutlineMenuAlt2 className="text-2xl" />
 
@@ -38,7 +44,7 @@ const CategoriesFilter = ({ categories, setCategory, selectedTags, setSelectedTa
         <div className="w-auto text-nowrap sm:hidden relative">
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="flex items-center justify-between w-full py-1 px-3 border rounded text-[#0c7054] font-medium bg-white"
+            className="flex items-center justify-between w-full py-1 px-3 border rounded  font-medium bg-white"style={{ color: restaurant?.primaryColor ?? "#0b7054" }}
           >
             {active ? active.name : "Select Category"}
             <FaChevronDown
@@ -53,14 +59,15 @@ const CategoriesFilter = ({ categories, setCategory, selectedTags, setSelectedTa
               <div
                 onClick={() => {
                   setActive(null);
-                  setIsOpen(false);
+                  setIsOpen(false); 
                 }}
-                className={`px-4 py-2 cursor-pointer hover:bg-gray-100 ${!active ? "text-[#0c7054] font-semibold" : "text-black"
-                  }`}
+                className={`px-4 py-2 cursor-pointer hover:bg-gray-100 ${!active ? "font-semibold" : "text-black"
+                  }`} style={{ color: restaurant?.primaryColor ?? "#0b7054" }}
+                  // style={{ color:!active ? restaurant?.primaryColor ?? "#0b7054" }}
               >
                 All Categories
               </div>
-
+ 
               {categories.map((cat) => (
                 <div
                   key={cat._id}
@@ -136,7 +143,7 @@ const CategoriesFilter = ({ categories, setCategory, selectedTags, setSelectedTa
             >
               {cat.name}
               {active?._id === cat._id && (
-                <span className="absolute bottom-0 left-0 w-full h-[1px] bg-[#0c7054]"></span>
+                <span className="absolute bottom-0 left-0 w-full h-[1px]" style={{ backgroundColor: restaurant?.primaryColor ?? "#0b7054" }}></span>
               )}
             </button>
           ))}

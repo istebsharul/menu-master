@@ -18,7 +18,8 @@ const MenuPage = () => {
   const { restaurant, categories, items, loading, error } = useSelector(
     (state) => state.publicMenu
   );
-
+  
+ 
   const [filteredItems, setFilteredItems] = useState(items);
   const [bestSeller, setBestSeller] = useState();
 
@@ -32,7 +33,31 @@ const MenuPage = () => {
       }));
   }, [items]);
 
+//  FOR Dynamic TITLE
+// useEffect(() => {
+//   if (restaurant?.businessName) {
+//     document.title = restaurant.businessName;
+//   } else {
+//     document.title = "Menu Master";
+//   }
+// }, [restaurant]);
 
+useEffect(() => {
+  if (restaurant?.businessName) {
+    setTimeout(() => {
+      document.title = restaurant.businessName;
+      console.log("TITLE FORCE SET:", restaurant.businessName);
+    }, 0);  
+  }
+}, [restaurant]);
+
+
+  
+
+  // useEffect(() => {
+  //   document.title = restaurant?.name || "Menu Master";
+  // }, [restaurant]); 
+  
   useEffect(() => {
     setBestSeller(bestSellerCarouselData);
     console.log("Hlelllllewflwnlvnw",bestSellerCarouselData);
@@ -53,7 +78,7 @@ const MenuPage = () => {
 
   useEffect(() => {
     let result = items;
-
+ 
     // Category filter
     if (category) {
       result = result.filter(

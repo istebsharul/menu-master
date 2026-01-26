@@ -1,9 +1,16 @@
 import React, { useState } from "react";
 import { FaStar } from "react-icons/fa";
+import { useSelector } from "react-redux";
 
 const Item = ({ item, onSelect }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const maxLength = 60;
+
+  // Adding state for primaryColor 
+const primaryColor = useSelector((state)=> state.restaurant.primaryColor)
+const restaurant = useSelector((state) => state.restaurant);
+
+
 
   const TAG_CONFIG = {
     "Best Seller": { emoji: "⭐", label: "Best Seller" },
@@ -63,7 +70,7 @@ const Item = ({ item, onSelect }) => {
                     {config.emoji}
                   </span>
                   <span className="leading-none">
-                    {config.label}
+                    {config.label} 
                   </span>
                 </span>
               );
@@ -76,7 +83,7 @@ const Item = ({ item, onSelect }) => {
             {item.name}
           </h3>
           <p className="text-sm text-green-700 text-[#FFB81C]">{item?.categoryId?.name}</p>
-          <p className="text-xs text-gray-700">
+          <p className="text-xs text-gray-700"> 
             {item.description?.length > maxLength
               ? isExpanded
                 ? item.description
@@ -86,7 +93,7 @@ const Item = ({ item, onSelect }) => {
             {item.description?.length > maxLength && (
               <button
                 onClick={() => setIsExpanded(!isExpanded)}
-                className="ml-1 text-[#0c7054] font-semibold"
+                className="ml-1  font-semibold" style={{ color: restaurant?.primaryColor ?? "#0b7054" }}
               >
                 {isExpanded ? "Show less" : "Show more"}
               </button>
