@@ -25,7 +25,7 @@ const restaurant = useSelector((state) => state.restaurant);
   useEffect(() => {
     console.log(categories);
   }, [categories]);
-
+   
   useEffect(() => {
     setCategory(active?.name);
   }, [active]);
