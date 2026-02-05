@@ -26,7 +26,7 @@ const CategoryFilter = ({ categories, activeCategory, setActiveCategory }) => {
           </button>
         ))}
       </div>
-
+  
       {/* Mobile Dropdown */}
       <div className="md:hidden">
         <select

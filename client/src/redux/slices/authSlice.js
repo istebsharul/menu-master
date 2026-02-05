@@ -13,8 +13,8 @@ export const registerUser = createAsyncThunk(
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || error.message
       );
-    }
-  }
+    } 
+  }  
 );
 
 // Login

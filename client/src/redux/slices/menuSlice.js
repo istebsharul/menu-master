@@ -228,7 +228,7 @@ const menuSlice = createSlice({
       .addCase(updateMenuItem.fulfilled, (state, action) => {
         const index = state.menuItems.findIndex(item => item._id === action.payload._id);
         if (index !== -1) {
-          state.menuItems[index] = action.payload;
+          state.menuItems[index] = action.payload; 
         }
         // remove loader for this item
         delete state.itemLoading[action.payload._id];

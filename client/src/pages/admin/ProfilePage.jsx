@@ -10,8 +10,8 @@ const createPreview = (file) => {
   const url = URL.createObjectURL(file);
   return { file, url };
 };
-
-const ImageSection = ({
+       
+const ImageSection = ({   
   title,
   existingItems,
   newFilesPreview,

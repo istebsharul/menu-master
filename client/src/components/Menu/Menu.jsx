@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import toast from "react-hot-toast";
 import {
   fetchCategories,
   fetchMenuItems,
@@ -8,7 +9,7 @@ import {
   deleteMenuItem,
   addCategory,
   updateCategory,
-  deleteCategory,
+  deleteCategory,  
   toggleMenuAvailability,
   toggleMenuAvailabilityOptimistic,
 } from "../../redux/slices/menuSlice";
@@ -134,13 +135,37 @@ const Menu = () => {
       formData.append("file", editRow.imageUrl);
     }
 
+    // if (isNewItem) {
+    //   dispatch(addMenuItem(formData));
+    //   console.log("New Item", formData);
+    // } else {
+    //   console.log(formData);
+    //   dispatch(updateMenuItem({ id: editingId, updatedData: formData }));
+    // }
+    
+
+    //       Adding react-hot-toast
     if (isNewItem) {
-      dispatch(addMenuItem(formData));
-      console.log("New Item", formData);
+      dispatch(addMenuItem(formData))
+        .unwrap()
+        .then(() => {
+          toast.success("Menu item added successfully 🍽️");
+        })
+        .catch(() => {
+          toast.error("Failed to add menu item ❌");
+        }); 
     } else {
       console.log(formData);
-      dispatch(updateMenuItem({ id: editingId, updatedData: formData }));
+      dispatch(updateMenuItem({ id: editingId, updatedData: formData }))
+        .unwrap()
+        .then(() => {
+          toast.success("Menu item updated successfully ✨");
+        })
+        .catch(() => {
+          toast.error("Failed to update menu item ❌");
+        });
     }
+    
 
     resetEditState();
   };
@@ -252,7 +277,7 @@ const Menu = () => {
             onDelete={(id) => dispatch(deleteCategory(id))}
           />
         </div>
-      </div>
+      </div> 
 
       {/* Menu Items */}
       <div className={`w-full md:p-2 p-3 ${view == 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-2' : 'space-y-2'}`}>
@@ -307,7 +332,7 @@ const Menu = () => {
                     previewImage={previewImage}
                     setPreviewImage={setPreviewImage}
                   />
-                ) : (
+                ) : (  
                   <MenuItemListView
                     item={item}
                     categories={categories}

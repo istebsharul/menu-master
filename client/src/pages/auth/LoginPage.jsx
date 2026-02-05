@@ -4,9 +4,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { loginUser, clearError } from "../../redux/slices/authSlice";
 import { IoReturnUpBackOutline } from "react-icons/io5";
+import toast from "react-hot-toast";
+
 
 import logo from "../../assets/logo.png";
-import image1 from "../../assets/image1.png";
+import image1 from "../../assets/image1.png"; 
 import image2 from "../../assets/image2.png";
 
 export default function LoginPage() {
@@ -18,19 +20,35 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
 
   // redirect if already logged in
+  // useEffect(() => {
+  //   if (user) {
+  //     navigate("/dashboard");
+  //   }
+  // }, [user, navigate]);
+
   useEffect(() => {
     if (user) {
+      toast.success("Login successful 🎉");  
       navigate("/dashboard");
     }
   }, [user, navigate]);
+  
 
   // handle error
+  // useEffect(() => {
+  //   if (error) {
+  //     alert("Hello",error); // replace with toast later
+  //     dispatch(clearError());
+  //   }
+  // }, [error, dispatch]);
+
   useEffect(() => {
     if (error) {
-      alert("Hello",error); // replace with toast later
+      toast.error(error);
       dispatch(clearError());
     }
   }, [error, dispatch]);
+   
 
   const handleSubmit = (e) => {
     e.preventDefault();

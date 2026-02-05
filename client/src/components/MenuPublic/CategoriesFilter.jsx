@@ -79,12 +79,12 @@ const restaurant = useSelector((state) => state.restaurant);
                     ? "text-[#0c7054] font-semibold"
                     : "text-black"
                     }`}
-                >
+                >   
                   {cat.name}
-                </div>
+                </div>  
               ))}
             </div>
-          )}
+          )}  
         </div>
       </div>
 
