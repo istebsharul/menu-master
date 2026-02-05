@@ -45,7 +45,7 @@ const QRPage = () => {
       const dataUrl = await toPng(node, {
         cacheBust: true,
         backgroundColor: "#ffffff",
-      });
+      }); 
   
       // 4x7 inch PDF (width x height in mm)
       const pdf = new jsPDF("p", "mm", [101.6, 177.8]);
@@ -55,7 +55,7 @@ const QRPage = () => {
   
       pdf.addImage(dataUrl, "PNG", 0, 0, pdfWidth, pdfHeight);
       pdf.save("menu-master-qr-4x7.pdf");
-    } catch (err) {
+    } catch (err) { 
       console.error(err);
       alert("PDF download failed");
     }
@@ -70,7 +70,7 @@ const QRPage = () => {
   className="w-full p-4 sm:p-6 flex flex-col items-center justify-center bg-gray-100"
 >
   {/* HEADER */}
-  <div className="py-4 sm:py-6 w-full max-w-xs sm:max-w-sm bg-green-700 flex justify-center items-center gap-2">
+  {/* <div className="py-4 sm:py-6 w-full max-w-xs sm:max-w-sm bg-green-700 flex justify-center items-center gap-2">
     <div className="w-10 h-10 sm:w-12 sm:h-12">
       <img
         className="w-full h-full object-contain"
@@ -81,14 +81,40 @@ const QRPage = () => {
     <h1 className="capitalize text-2xl sm:text-4xl font-bold text-white">
       menu master
     </h1>
-  </div>
+  </div> */}
+
+<div className="py-4 sm:py-6 w-full max-w-xs sm:max-w-sm bg-green-700 flex justify-center items-center gap-2">
+  {/* Restaurant Logo OR fallback initials */}
+  {user?.logo ? (
+    <div className="w-10 h-10 sm:w-12 sm:h-12">
+      <img
+        className="w-full h-full object-contain"
+        src={user.logo}
+        alt={user.businessName}
+      />
+    </div>
+  ) : (
+    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white text-green-700 flex items-center justify-center font-bold text-lg">
+      {user?.businessName?.charAt(0)}
+    </div>
+  )}  
+  {/* Restaurant Name */}
+  {/* <h1 className="capitalize text-2xl sm:text-4xl font-bold text-white">
+    {user?.businessName}
+  </h1> */}
+  <h1 className="capitalize text-2xl sm:text-3xl font-bold text-white drop-shadow-md">
+  {user?.businessName}
+</h1>
+
+</div>  
+
 
   {/* BODY */}
   <div className="w-full max-w-xs sm:max-w-sm flex bg-white flex-col justify-center py-4 sm:py-5">
-    <div className="text-center text-green-700 font-medium text-2xl sm:text-4xl pt-2">
+    <div className="text-center tracking-widest text-green-600 font-semibold text-2xl sm:text-4xl pt-2">
       Scan for Menu
     </div>
-
+    
     <div className="py-6 sm:py-9 flex justify-center items-center">
       <QRCode value={qrLink} size={220} className="sm:hidden" />
       <QRCode value={qrLink} size={256} className="hidden sm:block" />

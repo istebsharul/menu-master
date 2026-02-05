@@ -47,7 +47,7 @@ export const forgotPassword = createAsyncThunk(
     }
   }
 );
-
+ 
 // Reset Password
 export const resetPassword = createAsyncThunk(
   'auth/resetPassword',

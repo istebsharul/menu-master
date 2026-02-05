@@ -9,7 +9,7 @@ export const getProfile = createAsyncThunk('profile/getProfile', async (_, thunk
     return response.data;
   } catch (error) {
     return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to fetch profile');
-  }
+  } 
 });
 
 // Update user profile

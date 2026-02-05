@@ -16,7 +16,7 @@ const DashboardHome = () => {
           </div>
         </div>
 
-        {/* Categories */}
+        {/* Categories */}  
         <div className="bg-white p-4 rounded-xl shadow flex items-center space-x-4">
           <FaClipboardList className="text-3xl text-green-500" />
           <div>

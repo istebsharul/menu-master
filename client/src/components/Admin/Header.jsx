@@ -41,7 +41,7 @@ const DashboardHeader = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
-
+  
   return (
     <header className="w-full bg-white/90 backdrop-blur supports-[backdrop-filter]:bg-white/70 border-b border-gray-100 w-full top-0 z-50">
       <div className="w-full md:h-auto h-18 mx-auto md:px-2 md:py-2 2xl:py-1 flex items-center justify-between">
@@ -69,7 +69,7 @@ const DashboardHeader = () => {
                 onClick={() => setIsOpen(!isOpen)}
                 className="flex items-center gap-2 text-gray-700 hover:text-[#0c7054] transition"
               >
-                {user?.logo ? (
+                {user?.logo ? ( 
                   <img
                     src={user.logo}
                     alt="Logo"

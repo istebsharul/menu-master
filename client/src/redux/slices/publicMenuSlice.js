@@ -27,7 +27,7 @@ const publicMenuSlice = createSlice({
     items: [],
     loading: false,
     error: null,
-  },   
+  },    
   reducers: {},
   extraReducers: (builder) => {
     builder
