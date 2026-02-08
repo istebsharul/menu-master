@@ -19,7 +19,7 @@ export default function ResetPasswordPage() {
   const [form, setForm] = useState({ password: "", confirmPassword: "" });
 
   useEffect(() => {
-    if (error) {
+    if (error) {  
       alert(error);
       dispatch(clearError());
     }

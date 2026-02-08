@@ -3,7 +3,7 @@ import React ,{ useState } from "react";
 const AddNewDropdown = ({ onAddItem, onAddCategory }) => {
   const [open, setOpen] = useState(false);
 
-  return (
+  return (    
     <div className="relative">
       <button
         onClick={() => setOpen(!open)}

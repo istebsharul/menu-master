@@ -9,7 +9,7 @@ import FeaturedItems from "../../components/MenuPublic/FeaturesItems";
 import CategoriesFilter from "../../components/MenuPublic/CategoriesFilter";
 import Items from "../../components/MenuPublic/Items";
 
-const MenuPage = () => {
+const MenuPage = () => { 
   const { slug } = useParams();
   const dispatch = useDispatch();
   const [category, setCategory] = useState(null);

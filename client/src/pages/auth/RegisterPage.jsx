@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { registerUser, clearError } from "../../redux/slices/authSlice";
 import { IoReturnUpBackOutline } from "react-icons/io5";
+import toast from "react-hot-toast";
+
 
 
 import logo from "../../assets/logo.png";
@@ -22,16 +24,32 @@ export default function RegisterPage() {
     password: "",
   });
 
+  // useEffect(() => {
+  //   if (user) navigate("/dashboard");
+  // }, [user, navigate]);
+
   useEffect(() => {
-    if (user) navigate("/dashboard");
+    if (user) {
+      toast.success("Registration successful 🎉");
+      navigate("/dashboard");
+    }
   }, [user, navigate]);
+     
+
+  // useEffect(() => {
+  //   if (error) {
+  //     alert(error);
+  //     dispatch(clearError());
+  //   }
+  // }, [error, dispatch]);
 
   useEffect(() => {
     if (error) {
-      alert(error);
+      toast.error(error); 
       dispatch(clearError());
     }
   }, [error, dispatch]);
+  
 
   const handleChange = (e) =>
     setForm((f) => ({ ...f, [e.target.name]: e.target.value }));

@@ -88,7 +88,7 @@ const CategoriesFilter = ({ categories, setCategory, selectedTags, setSelectedTa
                 );
               })}
             </div>
-          )}
+          )}  
         </div>
       </div>
 
