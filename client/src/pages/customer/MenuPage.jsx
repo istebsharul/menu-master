@@ -19,6 +19,7 @@ const MenuPage = () => {
     (state) => state.publicMenu
   );
 
+
   const [filteredItems, setFilteredItems] = useState(items);
   const [bestSeller, setBestSeller] = useState();
 
@@ -32,24 +33,40 @@ const MenuPage = () => {
       }));
   }, [items]);
 
+  //  FOR Dynamic TITLE
+  // useEffect(() => {
+  //   if (restaurant?.businessName) {
+  //     document.title = restaurant.businessName;
+  //   } else {
+  //     document.title = "Menu Master";
+  //   }
+  // }, [restaurant]);
+
+  useEffect(() => {
+    if (restaurant?.businessName) {
+      setTimeout(() => {
+        document.title = restaurant.businessName;
+      }, 0);
+    }
+  }, [restaurant]);
+
+
+
+
+  // useEffect(() => {
+  //   document.title = restaurant?.name || "Menu Master";
+  // }, [restaurant]); 
 
   useEffect(() => {
     setBestSeller(bestSellerCarouselData);
-    console.log("Hlelllllewflwnlvnw",bestSellerCarouselData);
-    console.log(typeof bestSellerCarouselData);
-  },[bestSellerCarouselData]);
+
+  }, [bestSellerCarouselData]);
 
   useEffect(() => {
     if (slug) {
       dispatch(fetchPublicMenu(slug));
     }
   }, [slug, dispatch]);
-
-  // Log when restaurant changes
-  useEffect(() => {
-    console.log("Restaurant updated categories:", categories);
-    console.log("Hlwkn", category);
-  }, [category, categories]);
 
   useEffect(() => {
     let result = items;

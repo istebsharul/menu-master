@@ -37,7 +37,9 @@ export const updateProfile = async (req, res) => {
       businessName,
       address,
       deletedBanners,
-      deletedGallery
+      deletedGallery,
+      primaryColor,
+      secondaryColor
     } = req.body;
 
     const removeBanners = deletedBanners ? JSON.parse(deletedBanners) : [];
@@ -57,8 +59,6 @@ export const updateProfile = async (req, res) => {
       user.logo = req.files.logo[0].path;
     }
     
-    console.log("Banner Image Payload", req.files?.banner);
-
     if (req.files?.banner?.length) {
       const newBanners = req.files.banner.map(f => f.path);
       user.banner = Array.from(new Set([...user.banner, ...newBanners]));
@@ -67,16 +67,16 @@ export const updateProfile = async (req, res) => {
     if (req.files?.gallery) {
       user.gallery.push(...req.files.gallery.map(f => f.path));
     }
-    console.log("USER GALLERY",user.gallery);
-    
+        
     // Update fields
     user.name = name;
     user.email = email;
     user.phone = phone;
     user.businessName = businessName;
     user.address = address;
+    user.primaryColor = primaryColor;
+    user.secondaryColor = secondaryColor;
 
-    console.log(user);
     await user.save();
 
     res.json({ success: true, user });
@@ -108,7 +108,9 @@ export const registerUser = async (req, res) => {
         name: newUser.name,
         businessName: newUser.businessName,
         email: newUser.email,
-        slug: newUser.slug
+        slug: newUser.slug,
+        primaryColor: newUser.primaryColor,
+        secondaryColor: newUser.secondaryColor
       },
       token: generateToken(newUser._id),
     });
@@ -139,6 +141,8 @@ export const loginUser = async (req, res) => {
         businessName: user.businessName,
         slug: user.slug,
         logo: user.logo,
+        primaryColor: user.primaryColor,
+        secondaryColor: user.secondaryColor,
       },
       token: generateToken(user._id),
     });

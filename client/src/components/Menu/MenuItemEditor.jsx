@@ -37,9 +37,6 @@ const MenuItemEditor = ({
     });
   };
 
-  useEffect(() => {
-    console.log(editRow);
-  }, [editRow]);
 
   return (
     <div className="max-w-lg w-full bg-white rounded-xl border border-gray-200 p-4 flex gap-4 items-start shadow-inner">

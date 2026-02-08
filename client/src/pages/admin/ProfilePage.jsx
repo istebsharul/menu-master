@@ -106,8 +106,7 @@ const ImageSection = ({
 
                 if (files.length !== valid.length) {
                   toast.error(
-                    `Some files were ignored. Max ${maxFiles} images, each ≤ ${
-                      maxSizeBytes / 1024 / 1024
+                    `Some files were ignored. Max ${maxFiles} images, each ≤ ${maxSizeBytes / 1024 / 1024
                     }MB`
                   );
                 }
@@ -138,7 +137,7 @@ const ProfilePage = () => {
   );
 
   // text fields
-  const [form, setForm] = useState({ name: "", email: "", phone: "", businessName: "" });
+  const [form, setForm] = useState({ name: "", email: "", phone: "", businessName: "", primaryColor: "#000000", secondaryColor: "#ffffff", });
 
   // logo - keep existing and new separate
   const [existingLogo, setExistingLogo] = useState(null); // { id?, url }
@@ -175,6 +174,8 @@ const ProfilePage = () => {
         email: user.email || "",
         phone: user.phone || "",
         businessName: user.businessName || "",
+        primaryColor: user.primaryColor || "#000000",
+        secondaryColor: user.secondaryColor || "#ffffff",
       });
 
       setExistingLogo(user.logo ? { id: user.logo.id ?? null, url: user.logo.url ?? user.logo } : null);
@@ -310,6 +311,11 @@ const ProfilePage = () => {
     if (!form.name.trim()) return "Name is required";
     if (form.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) return "Invalid email";
     if (form.phone && !/^\+?[0-9\-\s]{7,20}$/.test(form.phone)) return "Invalid phone";
+    if (!/^#([0-9A-F]{3}){1,2}$/i.test(form.primaryColor))
+      return "Invalid primary color";
+    if (!/^#([0-9A-F]{3}){1,2}$/i.test(form.secondaryColor))
+      return "Invalid secondary color";
+
     return null;
   };
 
@@ -325,12 +331,14 @@ const ProfilePage = () => {
     formData.append("email", form.email);
     formData.append("phone", form.phone);
     formData.append("businessName", form.businessName);
+    formData.append("primaryColor", form.primaryColor);
+    formData.append("secondaryColor", form.secondaryColor);
+
 
     if (newLogo) formData.append("logo", newLogo.file);
     if (toDeleteExistingLogo) formData.append("deleteLogo", "true");
 
     newBanners.forEach(p => formData.append("banner", p.file));
-    console.log(newBanners);
     newGallery.forEach(p => formData.append("gallery", p.file));
 
     if (toDeleteExistingBanners.length > 0) formData.append("deletedBanners", JSON.stringify(toDeleteExistingBanners));
@@ -532,6 +540,52 @@ const ProfilePage = () => {
               <button type="button" onClick={handleCancel} disabled={loading || saving} className="bg-gray-300 text-gray-800 px-6 py-2 rounded-lg hover:bg-gray-400 transition-all disabled:opacity-50">Cancel</button>
             </div>
           )}
+
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+            <label className="font-medium w-full sm:w-1/3">
+              Primary Color
+            </label>
+            {isEditing ? (
+              <input
+                type="color"
+                name="primaryColor"
+                value={form.primaryColor}
+                onChange={handleChange}
+                className="w-20 h-10 cursor-pointer"
+              />
+            ) : (
+              <div className="flex items-center gap-2">
+                <div
+                  className="w-6 h-6 rounded border"
+                  style={{ backgroundColor: form.primaryColor }}
+                />
+                <span>{form.primaryColor}</span>
+              </div>
+            )}
+          </div>
+
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+            <label className="font-medium w-full sm:w-1/3">
+              Secondary Color
+            </label>
+            {isEditing ? (
+              <input
+                type="color"
+                name="secondaryColor"
+                value={form.secondaryColor}
+                onChange={handleChange}
+                className="w-20 h-10 cursor-pointer"
+              />
+            ) : (
+              <div className="flex items-center gap-2">
+                <div
+                  className="w-6 h-6 rounded border"
+                  style={{ backgroundColor: form.secondaryColor }}
+                />
+                <span>{form.secondaryColor}</span>
+              </div>
+            )}
+          </div>
         </form>
       </div>
     </div>

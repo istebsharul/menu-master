@@ -9,16 +9,25 @@ const userSchema = new mongoose.Schema({
   password: String,
 
   /* ----------------- BUSINESS DETAILS ----------------- */
-  businessName: { 
-    type: String, 
-    unique: true,  
-    required: [true, 'This name is not available, Try different.'] 
+  businessName: {
+    type: String,
+    unique: true,
+    required: [true, 'This name is not available, Try different.']
   },
   phone: String,
   logo: String,
-  banner: [String],      
+  banner: [String],
   gallery: [String],
-  slug: { type: String, unique: true, sparse: true }, 
+  slug: { type: String, unique: true, sparse: true },
+  primaryColor: {
+    type: String,
+    default: '#0b7054',
+  },
+  secondaryColor: {
+    type: String,
+    default: '#0b7054',
+  },
+
 
   /* ----------------- SYSTEM / META DATA ----------------- */
   createdAt: { type: Date, default: Date.now },

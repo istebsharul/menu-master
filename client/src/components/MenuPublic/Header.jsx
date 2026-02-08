@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FaStar, FaSearch } from "react-icons/fa";
 import { motion } from "framer-motion";
+import { useSelector } from "react-redux";
 
 const images = [
   "https://media.istockphoto.com/id/922783734/photo/assorted-indian-recipes-food-various.jpg?s=612x612&w=0&k=20&c=p8DepvymWfC5j7c6En2UsQ6sUM794SQMwceeBW3yQ9M=",
@@ -15,7 +16,7 @@ const reviews = [
     name: "Wasim A.",
     date: "26/05/2024",
     stars: 4,
-  },
+  },  
   {
     text: "Tried Special keema naan, Afghani chicken, n rolls. It's a tiny gem of a place.",
     name: "Asif I.",
@@ -33,6 +34,11 @@ const reviews = [
 const Header = ({logo}) => {
   const [activeIndex, setActiveIndex] = useState(0);
 
+  // Adding state for primaryColor 
+const restaurant = useSelector((state) => state.restaurant);
+
+
+
   // Auto-slide carousel every 4s
   useEffect(() => {
     const interval = setInterval(() => {
@@ -44,18 +50,18 @@ const Header = ({logo}) => {
   return (
     <div className="mx-auto space-y-4">
       {/* Logo */}
-      <motion.div
+      {/* <motion.div
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.7 }}
-        className="w-full flex justify-center items-center h-20 bg-[#0c7054]"
+        className="w-full flex justify-center items-center h-20 " style={{ backgroundColor: restaurant?.primaryColor ?? "#0b7054" }}
       >
         <img
           className="h-16"
           src={logo}
           alt="Logo"
         />
-      </motion.div>
+      </motion.div> */}
 
       <div className="max-w-6xl mx-auto md:space-y-4 space-y-2">
         {/* Banner Images */}
@@ -75,9 +81,9 @@ const Header = ({logo}) => {
               <img
                 src="https://static.vecteezy.com/system/resources/thumbnails/038/970/612/small/ai-generated-chicken-biryani-in-a-shiny-silver-bowl-spicy-curry-and-aromatic-flavors-authentic-indian-food-serving-fancy-food-in-a-restaurant-photo.jpg"
                 alt="Food 2"
-                className="w-full h-full w-full object-cover md:rounded-tr-4xl rounded-tr-2xl"
+                className="w-full h-full  object-cover md:rounded-tr-4xl rounded-tr-2xl"
               />
-            </div>
+            </div> 
 
             <div className="flex w-full h-1/2 md:pt-2 pt-1">
               {/* Bottom Right Small Images */}
@@ -100,7 +106,7 @@ const Header = ({logo}) => {
         <div className="flex md:flex-row flex-col-reverse md:space-x-4 gap-3 md:gap-0 px-4">
           <div className="h-full bg-white w-full">
             <div className="py-6 px-4 border border-[#0c7054] rounded-2xl shadow">
-              <h2 className="md:pb-4 md:text-4xl text-xl font-bold text-[#0c7054]">
+              <h2 className="md:pb-4 md:text-4xl text-xl font-bold " style={{ color: restaurant?.primaryColor ?? "#0b7054" }}>
                 Where Flavor meets Comfort
               </h2>
               <p className="mt-2 md:text-sm text-xs text-gray-600">
@@ -110,7 +116,7 @@ const Header = ({logo}) => {
               </p>
             </div>
 
-            <div className="mt-3 bg-[#0c7054] border rounded-2xl md:px-4 px-2 md:py-3 py-2">
+            <div className="mt-3  border rounded-2xl md:px-4 px-2 md:py-3 py-2" style={{ backgroundColor: restaurant?.primaryColor ?? "#0b7054" }}>
               <h1 className="text-lg font-bold text-white">Search your Cravings</h1>
               <div className="flex items-center rounded-xl bg-white mt-2">
                 <FaSearch className="ml-4 text-gray-500" />

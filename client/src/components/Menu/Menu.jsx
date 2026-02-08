@@ -61,7 +61,6 @@ const Menu = () => {
       setAvailability(
         Object.fromEntries(menuItems.map((item) => [item._id, item.available]))
       );
-      console.log(menuItems);
     }
   }, [menuItems]);
 
@@ -120,7 +119,6 @@ const Menu = () => {
 
     const formData = new FormData();
 
-    console.log(editRow);
     formData.append("name", editRow.name);
     formData.append("price", editRow.price);
     formData.append("description", editRow.description);
@@ -128,17 +126,13 @@ const Menu = () => {
     formData.append("available", editRow.available);
     formData.append("tags", editRow.tags);
 
-    console.log(formData);
-
     if (editRow.imageUrl instanceof File) {
       formData.append("file", editRow.imageUrl);
     }
 
     if (isNewItem) {
       dispatch(addMenuItem(formData));
-      console.log("New Item", formData);
     } else {
-      console.log(formData);
       dispatch(updateMenuItem({ id: editingId, updatedData: formData }));
     }
 
@@ -148,7 +142,6 @@ const Menu = () => {
   const handleCancelEdit = () => resetEditState();
 
   const handleEdit = (item) => {
-    console.log(item._id);
     setEditingId(item._id);
     setIsNewItem(false);
     setEditRow({

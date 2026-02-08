@@ -1,6 +1,6 @@
 import React from "react";
 import { FaHeart } from "react-icons/fa";
-
+import { useSelector } from "react-redux";
 
 // const featuredItems = [
 //     { name: "Mandi", img: "https://t4.ftcdn.net/jpg/07/75/11/61/360_F_775116148_auR8R1TmdkuB3wKhCd1DRKrPDbebnVXN.jpg" },
@@ -18,9 +18,12 @@ import { FaHeart } from "react-icons/fa";
 const FeaturedItems = ({ featuredItems = [] }) => {
     if (!Array.isArray(featuredItems)) return null;
 
+    // Adding state for primaryColor 
+    const restaurant = useSelector((state) => state.publicMenu.restaurant);
+
     return (
         <div className="max-w-6xl mx-auto md:py-8">
-            <div className="px-4 py-4 flex items-center gap-2 text-[#0c7054] font-light text-xl">
+            <div className="px-4 py-4 flex items-center gap-2  font-light text-xl" style={{ color: restaurant?.secondaryColor ?? "#0b7054" }}>
                 {/* <FaHeart className="text-red-500 text-2xl"/> */}
                 Recommended for You
             </div>
@@ -36,7 +39,8 @@ const FeaturedItems = ({ featuredItems = [] }) => {
                                 alt={item.name}
                                 className="w-20 h-20 object-cover rounded-full shadow-md hover:scale-105 transition-transform"
                             />
-                            <p className="w-min mt-2 text-xs font-medium w-full">{item.name}</p>
+                            {/* <p className="w-min mt-2 text-xs font-medium w-full">{item.name}</p> */}
+                            <p className=" mt-2 text-xs font-medium w-full">{item.name}</p>
                         </div>
                     ))}
                 </div>
