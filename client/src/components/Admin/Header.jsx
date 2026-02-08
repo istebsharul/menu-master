@@ -30,7 +30,6 @@ const DashboardHeader = () => {
 
   // Close dropdown when clicking outside
   useEffect(() => {
-    console.log(user);
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsOpen(false);

@@ -16,7 +16,6 @@ export const getProfile = createAsyncThunk('profile/getProfile', async (_, thunk
 export const updateProfile = createAsyncThunk('profile/updateProfile', async (updatedData, thunkAPI) => {
   try {
     const response = await api.put('/auth/profile', updatedData);
-    console.log("Profile",response.data);
     return response.data.user;
   } catch (error) {
     console.log(error?.response?.data);

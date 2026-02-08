@@ -20,8 +20,7 @@ const Header = ({ logo, gallery = [] }) => {
 
 // Adding state for primaryColor 
 // const primaryColor = useSelector((state)=> state.restaurant.primaryColor)
-const restaurant = useSelector((state) => state.restaurant);
-
+const restaurant = useSelector((state) => state.publicMenu.restaurant);
 
   useEffect(() => {
     if (gallery.length) {

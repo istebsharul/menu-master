@@ -31,6 +31,8 @@ export const getMenu = async (req, res) => {
       address: user.address || '',
       phone: user.phone || '',
       gallery: user.gallery || '',
+      primaryColor: user.primaryColor || '',
+      secondaryColor: user.secondaryColor || ''
     };
 
     res.json({ restaurant: publicUser, menuItems: items });

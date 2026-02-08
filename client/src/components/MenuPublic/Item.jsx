@@ -7,9 +7,7 @@ const Item = ({ item, onSelect }) => {
   const maxLength = 60;
 
   // Adding state for primaryColor 
-const primaryColor = useSelector((state)=> state.restaurant.primaryColor)
-const restaurant = useSelector((state) => state.restaurant);
-
+  const restaurant = useSelector((state) => state.publicMenu.restaurant);
 
 
   const TAG_CONFIG = {
@@ -82,7 +80,7 @@ const restaurant = useSelector((state) => state.restaurant);
           <h3 className="md:text-lg text-lg flex font-semibold items-center">
             {item.name}
           </h3>
-          <p className="text-sm text-green-700 text-[#FFB81C]">{item?.categoryId?.name}</p>
+          <p className="text-sm text-green-700" style={{color: restaurant?.secondaryColor}}>{item?.categoryId?.name}</p>
           <p className="text-xs text-gray-700"> 
             {item.description?.length > maxLength
               ? isExpanded
@@ -93,7 +91,7 @@ const restaurant = useSelector((state) => state.restaurant);
             {item.description?.length > maxLength && (
               <button
                 onClick={() => setIsExpanded(!isExpanded)}
-                className="ml-1  font-semibold" style={{ color: restaurant?.primaryColor ?? "#0b7054" }}
+                className="ml-1  font-semibold" style={{ color: restaurant?.secondaryColor ?? "#0b7054" }}
               >
                 {isExpanded ? "Show less" : "Show more"}
               </button>

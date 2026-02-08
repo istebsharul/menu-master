@@ -35,7 +35,6 @@ const Header = ({logo}) => {
   const [activeIndex, setActiveIndex] = useState(0);
 
   // Adding state for primaryColor 
-const primaryColor = useSelector((state)=> state.restaurant.primaryColor)
 const restaurant = useSelector((state) => state.restaurant);
 
 
@@ -51,7 +50,7 @@ const restaurant = useSelector((state) => state.restaurant);
   return (
     <div className="mx-auto space-y-4">
       {/* Logo */}
-      <motion.div
+      {/* <motion.div
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.7 }}
@@ -62,7 +61,7 @@ const restaurant = useSelector((state) => state.restaurant);
           src={logo}
           alt="Logo"
         />
-      </motion.div>
+      </motion.div> */}
 
       <div className="max-w-6xl mx-auto md:space-y-4 space-y-2">
         {/* Banner Images */}

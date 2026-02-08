@@ -5,8 +5,6 @@ import upload from '../middlewares/upload.js';
 
 export const createItem = async (req, res) => {
   try {
-    logger.info('Hit createItem endpoint');
-    console.log(req.body);
     const userId = req.user._id;
     const { categoryId, name, description, price, available } = req.body;
 
@@ -56,8 +54,6 @@ export const updateItem = async (req, res) => {
     const itemId = req.params.id;
     const { categoryId, name, price, description, available, tags } = req.body;
 
-    console.log("Tags", tags);
-
     let imageUrl;
     if (req.file) {
       const uploaded = await uploadImage(req.file.path, "menu-items");
@@ -83,8 +79,6 @@ export const updateItem = async (req, res) => {
     } // ensure array
     if (imageUrl) updateData.imageUrl = imageUrl;
 
-    console.log("[UPDATE_ITEM] Final update data:", updateData);
-
     const item = await MenuItem.findOneAndUpdate(
       { _id: itemId, userId },
       updateData,
@@ -95,8 +89,6 @@ export const updateItem = async (req, res) => {
       console.warn(`[UPDATE_ITEM] Item not found: ${itemId}`);
       return res.status(404).json({ message: "Item not found" });
     }
-
-    console.log("[UPDATE_ITEM] Update successful:", item);
 
     res.json(item);
   } catch (error) {
@@ -146,55 +138,6 @@ export const updateAvailability = async (req, res) => {
     res.status(500).json({ message: 'Failed to update availability' });
   }
 };
-
-// export const updateItem = async (req, res) => {
-//   try {
-//     console.info("Req Body", req.body);
-//     const userId = req.user._id;
-//     const itemId = req.params.id;
-//     const { categoryId, name, price, description, available } = req.body;
-
-//     console.log(`[UPDATE_ITEM] User: ${userId}, Item: ${itemId}`);
-//     console.log("[UPDATE_ITEM] Incoming data:", req.body);
-
-//     let imageUrl;
-//     if (req.file) {
-//       const uploaded = await uploadImage(req.file.path, 'menu-items');
-//       imageUrl = uploaded.url;
-//     }else{
-//       logger.info("No file to upload");
-//     }
-
-//     // Build update object dynamically
-//     const updateData = {};
-//     if (categoryId !== undefined) updateData.categoryId = categoryId;
-//     if (name !== undefined) updateData.name = name;
-//     if (price !== undefined) updateData.price = price;
-//     if (description != undefined ) updateData.description = description;
-//     if (available !== undefined) updateData.available = available;
-//     if (imageUrl) updateData.imageUrl = imageUrl;
-
-//     console.log("[UPDATE_ITEM] Final update data:", updateData);
-
-//     const item = await MenuItem.findOneAndUpdate(
-//       { _id: itemId, userId },
-//       updateData,
-//       { new: true }
-//     );
-
-//     if (!item) {
-//       console.warn(`[UPDATE_ITEM] Item not found: ${itemId}`);
-//       return res.status(404).json({ message: 'Item not found' });
-//     }
-
-//     console.log("[UPDATE_ITEM] Update successful:", item);
-
-//     res.json(item);
-//   } catch (error) {
-//     console.error("[UPDATE_ITEM] Error occurred:", error);
-//     res.status(500).json({ message: 'Failed to update menu item' });
-//   }
-// };
 
 export const deleteItem = async (req, res) => {
   try {

@@ -173,7 +173,6 @@ export default function LoginPage() {
 //     if (user) {
 //       navigate('/dashboard'); // Redirect if logged in
 //     }
-//     console.log(user);
 //   }, [user, navigate]);
 
 //   useEffect(() => {

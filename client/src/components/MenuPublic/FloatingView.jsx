@@ -6,8 +6,7 @@ const FloatingView = ({ isOpen, onClose, item }) => {
   const floatingRef = useRef(null);
 
   // Adding state for primaryColor 
-const primaryColor = useSelector((state)=> state.restaurant.primaryColor)
-const restaurant = useSelector((state) => state.restaurant);
+  const restaurant = useSelector((state) => state.publicMenu.restaurant);
 
 
 
@@ -66,7 +65,7 @@ const restaurant = useSelector((state) => state.restaurant);
             <h3 className="text-xl font-semibold text-gray-800">
               {item.name}
             </h3>
-            <p className=" font-bold" style={{ color: restaurant?.primaryColor ?? "#0b7054" }}>
+            <p className=" font-bold" style={{ color: restaurant?.secondaryColor ?? "#0b7054" }}>
               ${item.price.toFixed(2)}
               {item.price && (
                 <span className="ml-2 text-gray-500 line-through text-sm">

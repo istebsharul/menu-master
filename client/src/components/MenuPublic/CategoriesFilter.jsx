@@ -17,14 +17,7 @@ const CategoriesFilter = ({ categories, setCategory, selectedTags, setSelectedTa
   const [active, setActive] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
 
-  // Adding state for primaryColor 
-const primaryColor = useSelector((state)=> state.restaurant.primaryColor)
-const restaurant = useSelector((state) => state.restaurant);
-
-
-  useEffect(() => {
-    console.log(categories);
-  }, [categories]);
+  const restaurant = useSelector((state) => state.publicMenu.restaurant);
 
   useEffect(() => {
     setCategory(active?.name);
@@ -33,7 +26,7 @@ const restaurant = useSelector((state) => state.restaurant);
   return (
     <div className="sticky top-0 bg-white max-w-6xl mx-auto flex flex-col items-start justify-between px-4 py-4 gap-2 z-1 md:shadow-none shadow">
       <div className="w-full flex justify-between items-center">
-        <div className="flex items-center gap-2  font-bold text-xl" style={{ color: restaurant?.primaryColor ?? "#0b7054" }}>
+        <div className="flex items-center gap-2  font-bold text-xl" style={{ color: restaurant?.secondaryColor ?? "#0b7054" }}>
           {/* <BiSolidCategory className="text-xl" /> */}
           <HiOutlineMenuAlt2 className="text-2xl" />
 
@@ -44,7 +37,7 @@ const restaurant = useSelector((state) => state.restaurant);
         <div className="w-auto text-nowrap sm:hidden relative">
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="flex items-center justify-between w-full py-1 px-3 border rounded  font-medium bg-white"style={{ color: restaurant?.primaryColor ?? "#0b7054" }}
+            className="flex items-center justify-between w-full py-1 px-3 border rounded  font-medium bg-white" style={{ color: restaurant?.secondaryColor ?? "#0b7054" }}
           >
             {active ? active.name : "Select Category"}
             <FaChevronDown
@@ -59,30 +52,41 @@ const restaurant = useSelector((state) => state.restaurant);
               <div
                 onClick={() => {
                   setActive(null);
-                  setIsOpen(false); 
+                  setIsOpen(false);
                 }}
+                style={
+                  !active
+                    ? { color: restaurant?.primaryColor ?? "#0b7054" }
+                    : {}
+                }
                 className={`px-4 py-2 cursor-pointer hover:bg-gray-100 ${!active ? "font-semibold" : "text-black"
-                  }`} style={{ color: restaurant?.primaryColor ?? "#0b7054" }}
-                  // style={{ color:!active ? restaurant?.primaryColor ?? "#0b7054" }}
+                  }`}
               >
                 All Categories
               </div>
- 
-              {categories.map((cat) => (
-                <div
-                  key={cat._id}
-                  onClick={() => {
-                    setActive(cat);
-                    setIsOpen(false);
-                  }}
-                  className={`px-4 py-2 cursor-pointer hover:bg-gray-100 ${active?._id === cat._id
-                    ? "text-[#0c7054] font-semibold"
-                    : "text-black"
-                    }`}
-                >
-                  {cat.name}
-                </div>
-              ))}
+
+              {categories.map((cat) => {
+                const isActive = active?._id === cat._id;
+
+                return (
+                  <div
+                    key={cat._id}
+                    onClick={() => {
+                      setActive(cat);
+                      setIsOpen(false);
+                    }}
+                    style={
+                      isActive
+                        ? { color: restaurant?.primaryColor ?? "#0b7054" }
+                        : {}
+                    }
+                    className={`px-4 py-2 cursor-pointer hover:bg-gray-100 ${isActive ? "font-semibold" : "text-black"
+                      }`}
+                  >
+                    {cat.name}
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>
@@ -102,11 +106,12 @@ const restaurant = useSelector((state) => state.restaurant);
                     : [...prev, tag]
                 );
               }}
-              className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs border transition
-          ${active
-                  ? "bg-[#0c7054] text-white border-[#0c7054]"
-                  : "bg-white text-gray-700 border-gray-300 hover:bg-green-50"
-                }`}
+              style={{
+                backgroundColor: active ? restaurant?.secondaryColor : "#ffffff",
+                borderColor: restaurant?.secondaryColor,
+                color: active ? "#ffffff" : restaurant?.secondaryColor,
+              }}
+              className="flex items-center gap-1 px-3 py-1 rounded-full text-xs border transition"
             >
               <span>{config.emoji}</span>
               <span>{tag}</span>
@@ -127,26 +132,53 @@ const restaurant = useSelector((state) => state.restaurant);
 
       <div className="relative hidden sm:block">
         <div ref={scrollRef} className="flex overflow-x-auto scrollbar-hide">
-          {
-            <button
-              onClick={() => setActive(null)}
-              className={`${active === null ? 'font-medium text-[#0c7054] border-b-2' : ''}`}>All
-            </button>}
-          {categories.map((cat) => (
-            <button
-              key={cat._id}
-              onClick={() => setActive(cat)}
-              className={`relative whitespace-nowrap py-2 px-4 transform transition-all duration-300 hover:bg-green-50 hover:rounded-t-xl ${active?._id === cat._id
-                ? "font-medium text-[#0c7054] border-b-2"
-                : "text-black"
-                }`}
-            >
-              {cat.name}
-              {active?._id === cat._id && (
-                <span className="absolute bottom-0 left-0 w-full h-[1px]" style={{ backgroundColor: restaurant?.primaryColor ?? "#0b7054" }}></span>
-              )}
-            </button>
-          ))}
+          {/* All button */}
+          <button
+            onClick={() => setActive(null)}
+            style={
+              active === null
+                ? {
+                  color: restaurant?.secondaryColor,
+                  borderBottom: `2px solid ${restaurant?.secondaryColor}`,
+                }
+                : {}
+            }
+            className="whitespace-nowrap py-2 px-4 transition-all duration-300"
+          >
+            All
+          </button>
+
+          {categories.map((cat) => {
+            const isActive = active?._id === cat._id;
+
+            return (
+              <button
+                key={cat._id}
+                onClick={() => setActive(cat)}
+                style={
+                  isActive
+                    ? {
+                      color: restaurant?.secondaryColor,
+                      borderBottom: `2px solid ${restaurant?.secondaryColor}`,
+                    }
+                    : {}
+                }
+                className={`relative whitespace-nowrap py-2 px-4 transform transition-all duration-300 hover:rounded-t-xl ${isActive ? "font-medium" : "text-black"
+                  }`}
+              >
+                {cat.name}
+
+                {isActive && (
+                  <span
+                    className="absolute bottom-0 left-0 w-full h-[1px]"
+                    style={{
+                      backgroundColor: restaurant?.secondaryColor,
+                    }}
+                  />
+                )}
+              </button>
+            );
+          })}
         </div>
       </div>
     </div>

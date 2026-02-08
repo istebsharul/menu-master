@@ -8,7 +8,6 @@ export const fetchPublicMenu = createAsyncThunk(
   async (slug, thunkAPI) => {
     try {
       const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/public/menu?slug=${slug}`);
-      console.log(res.data);
       return res.data;
     } catch (err) {
       console.log("Error", err);

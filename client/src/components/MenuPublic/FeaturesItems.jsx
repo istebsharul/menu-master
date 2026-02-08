@@ -19,14 +19,11 @@ const FeaturedItems = ({ featuredItems = [] }) => {
     if (!Array.isArray(featuredItems)) return null;
 
     // Adding state for primaryColor 
-const primaryColor = useSelector((state)=> state.restaurant.primaryColor)
-const restaurant = useSelector((state) => state.restaurant);
-
- 
+    const restaurant = useSelector((state) => state.publicMenu.restaurant);
 
     return (
         <div className="max-w-6xl mx-auto md:py-8">
-            <div className="px-4 py-4 flex items-center gap-2  font-light text-xl" style={{ color: restaurant?.primaryColor ?? "#0b7054" }}>
+            <div className="px-4 py-4 flex items-center gap-2  font-light text-xl" style={{ color: restaurant?.secondaryColor ?? "#0b7054" }}>
                 {/* <FaHeart className="text-red-500 text-2xl"/> */}
                 Recommended for You
             </div>
@@ -38,15 +35,15 @@ const restaurant = useSelector((state) => state.restaurant);
                             className="flex flex-col items-center flex-shrink-0 sm:flex-shrink p-1"
                         >
                             <img
-                                src={item.imageUrl} 
+                                src={item.imageUrl}
                                 alt={item.name}
                                 className="w-20 h-20 object-cover rounded-full shadow-md hover:scale-105 transition-transform"
                             />
                             {/* <p className="w-min mt-2 text-xs font-medium w-full">{item.name}</p> */}
                             <p className=" mt-2 text-xs font-medium w-full">{item.name}</p>
                         </div>
-                    ))}    
-                </div>   
+                    ))}
+                </div>
             </div>
 
         </div>
