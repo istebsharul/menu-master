@@ -5,12 +5,14 @@ import QRCode from "react-qr-code";
 import { toPng } from "html-to-image";
 import jsPDF from "jspdf";
 
+
 const QRPage = () => {
   const { user } = useSelector((state) => state.auth);
+const restaurant = useSelector((state) => state.publicMenu.restaurant);
   const pdfRef = useRef(null);
 
   if (!user?.slug) {
-    return <p>No store info</p>;
+    return <p>No store info</p>;  
   }
 
   const qrLink = `${import.meta.env.VITE_BASE_URL}/s/${user.slug}`;
@@ -83,37 +85,32 @@ const QRPage = () => {
     </h1>
   </div> */}
 
-<div className="py-4 sm:py-6 w-full max-w-xs sm:max-w-sm bg-green-700 flex justify-center items-center gap-2">
-  {/* Restaurant Logo OR fallback initials */}
+<div className="py-1 sm:py-1 w-full max-w-xs sm:max-w-sm  flex justify-center items-center" style={{ backgroundColor: restaurant?.primaryColor ?? "#0b7054" }}>
+
+  {/* Restaurant Logo OR fallback initials */}  
   {user?.logo ? (
-    <div className="w-10 h-10 sm:w-12 sm:h-12">
+    <div className="w-28 h-28 sm:w-32 sm:h-32">
+  
       <img
         className="w-full h-full object-contain"
-        src={user.logo}
-        alt={user.businessName}
+        src={user.logo} 
+        alt={user.businessName}  
       />
-    </div>
+    </div>  
   ) : (
-    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white text-green-700 flex items-center justify-center font-bold text-lg">
+    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white text-green-700 flex items-center justify-center font-bold text-lg">
       {user?.businessName?.charAt(0)}
     </div>
   )}  
-  {/* Restaurant Name */}
-  {/* <h1 className="capitalize text-2xl sm:text-4xl font-bold text-white">
-    {user?.businessName}
-  </h1> */}
-  <h1 className="capitalize text-2xl sm:text-3xl font-bold text-white drop-shadow-md">
-  {user?.businessName}
-</h1>
-
 </div>  
 
 
   {/* BODY */}
   <div className="w-full max-w-xs sm:max-w-sm flex bg-white flex-col justify-center py-4 sm:py-5">
-    <div className="text-center tracking-widest text-green-600 font-semibold text-2xl sm:text-4xl pt-2">
-      Scan for Menu
-    </div>
+    <div className="text-center tracking-wide text-green-700 font-bold text-3xl sm:text-4xl pt-1 font-mono" style={{ color: "#0b7054" }}>
+        Scan for Menu
+     </div>  
+
     
     <div className="py-6 sm:py-9 flex justify-center items-center">
       <QRCode value={qrLink} size={220} className="sm:hidden" />
@@ -132,12 +129,12 @@ const QRPage = () => {
           alt="Menu Master Logo"
         />
       </div>
-      <h3 className="capitalize text-xl sm:text-2xl font-bold text-green-700">
+      <h3 className="capitalize text-xl sm:text-2xl font-bold text-green-700" >
         menu master
       </h3>
-    </div>
+    </div>  
   </div>
-</div>
+</div>  
 
 {/* BUTTON */}
 <div className="flex justify-center mt-4 sm:mt-6">
